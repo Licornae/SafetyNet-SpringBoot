@@ -1,5 +1,5 @@
 package com.safetynet.alerts.controller;
 
-public class MedicalRecord {
+public class MedicalRecordController {
     //TODO endpoints MedicalRecord
 }
