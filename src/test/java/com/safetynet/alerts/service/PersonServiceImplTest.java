@@ -15,7 +15,7 @@ public class PersonServiceImplTest {
 
     @Test
     public void whenFindingExistingPerson_thenReturnsCorrectPerson() {
-        // Arrange - ces infos doivent exister dans data.json
+        // Arrange : ces infos doivent exister dans data.json
         String firstName = "John";
         String lastName = "Boyd";
 
