@@ -2,23 +2,25 @@
 package com.safetynet.alerts.service;
 
 import com.safetynet.alerts.model.Person;
+import com.safetynet.alerts.repository.DataRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @Service
 public class PersonServiceImpl implements PersonService {
+
+    private final DataRepository dataRepository;
+
+    @Autowired
+    public PersonServiceImpl(DataRepository dataRepository) {
+        this.dataRepository = dataRepository;
+    }
     @Override
     public Person getPerson(String firstName, String lastName) {
-        if (firstName.equals("John") && lastName.equals("Boyd")) {
-            Person person = new Person();
-            person.setFirstName("John");
-            person.setLastName("Boyd");
-            person.setAddress("1509 Culver St");
-            person.setCity("Culver");
-            person.setZip("97451");
-            person.setPhone("841-874-6512");
-            person.setEmail("jaboyd@email.com");
-            return person;
-        }
-        return null;
+        return dataRepository.getDataContainer().getPersons().stream()
+                .filter(p -> p.getFirstName().equals(firstName)
+                        && p.getLastName().equals(lastName))
+                .findFirst()
+                .orElse(null);
     }
 }
