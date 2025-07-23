@@ -1,8 +1,8 @@
 package com.safetynet.alerts.service;
 
+import com.safetynet.alerts.model.Person;
 import org.springframework.stereotype.Service;
 
-@Service
-public class PersonService {
-    // TODO méthodes sur les personnes
+public interface PersonService {
+    Person getPerson(String firstName, String lastName);
 }
