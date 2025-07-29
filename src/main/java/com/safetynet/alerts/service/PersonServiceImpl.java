@@ -23,4 +23,10 @@ public class PersonServiceImpl implements PersonService {
                 .findFirst()
                 .orElse(null);
     }
+
+    @Override
+    public Person addPerson(Person person) {
+        dataRepository.getDataContainer().getPersons().add(person);
+        return person;
+    }
 }
