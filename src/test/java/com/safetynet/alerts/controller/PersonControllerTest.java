@@ -20,6 +20,8 @@ public class PersonControllerTest {
     @Autowired
     public MockMvc mockMvc;
 
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @MockitoBean
     private PersonService personService;
@@ -56,8 +58,6 @@ public class PersonControllerTest {
         // Arrange
         Person newPerson = new Person("Jane","Doe","56 River St", "Culver", "97451", "841-874-7650", "janedoe@email.com");
 
-        ObjectMapper mapper = new ObjectMapper();
-
         when(personService.addPerson(
                 org.mockito.ArgumentMatchers.any(Person.class))
         ).thenReturn(newPerson);
@@ -65,7 +65,7 @@ public class PersonControllerTest {
         // Act & Assert
         mockMvc.perform(post("/person")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(newPerson))
+                        .content(objectMapper.writeValueAsString(newPerson))
                 )
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.firstName").value("Jane"))
@@ -76,5 +76,34 @@ public class PersonControllerTest {
                 .andExpect(jsonPath("$.phone").value("841-874-7650"))
                 .andExpect(jsonPath("$.email").value("janedoe@email.com"));
     }
+
+    @Test
+    void addPerson_ExistingPerson_ReturnsConflict() throws Exception {
+        // Arrange
+        Person existing = new Person("Jane","Doe","56 River St", "Culver", "97451", "841-874-7650", "janedoe@email.com");
+
+        // Simule que la personne existe déjà
+        when(personService.getPerson(existing.getFirstName(), existing.getLastName())).thenReturn(existing);
+
+        mockMvc.perform(post("/person")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(existing))
+                )
+                .andExpect(status().isConflict())
+                .andExpect(content().string("Cette personne existe déjà"));
+    }
+
+    @Test
+    void addPerson_MissingFirstName_ReturnsBadRequest() throws Exception {
+        // Arrange
+        Person invalidPerson = new Person("", "Doe", "56 River St", "Culver", "97451", "841-874-7650", "janedoe@email.com");
+
+        mockMvc.perform(post("/person")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(invalidPerson))
+                )
+                .andExpect(status().isBadRequest());
+    }
+
 }
 
