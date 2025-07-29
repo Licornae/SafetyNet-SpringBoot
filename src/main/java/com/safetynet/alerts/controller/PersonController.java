@@ -2,6 +2,7 @@ package com.safetynet.alerts.controller;
 
 import com.safetynet.alerts.model.Person;
 import com.safetynet.alerts.service.PersonService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +24,13 @@ public class PersonController {
     }
 
     @PostMapping("/person")
-    public ResponseEntity<Person> addPerson(@RequestBody Person person) {
+    public ResponseEntity<?> addPerson(@Valid @RequestBody Person person) {
+        // Évite d’ajouter un doublon
+        Person existing = personService.getPerson(person.getFirstName(), person.getLastName());
+        if (existing != null) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Cette personne existe déjà");
+        }
+
         Person savedPerson = personService.addPerson(person);
         return new ResponseEntity<>(savedPerson, HttpStatus.CREATED);
     }
