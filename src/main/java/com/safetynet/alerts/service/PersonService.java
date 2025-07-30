@@ -9,5 +9,5 @@ public interface PersonService {
 
     Person updatePerson(String firstName, String lastName, Person person);
 
-    Person deletePerson(String firstName, String lastName);
+    void deletePerson(String firstName, String lastName);
 }

@@ -59,7 +59,7 @@ public class PersonControllerTest {
     }
 
     @Test
-    void addANewPerson() throws Exception {
+    void addANewPerson_Successful() throws Exception {
         // Arrange
         Person newPerson = new Person("Jane","Doe","56 River St", "Culver", "97451", "841-874-7650", "janedoe@email.com");
 
@@ -137,6 +137,7 @@ public class PersonControllerTest {
 
     @Test
     public void testUpdatePerson_NotFound() throws Exception {
+        // Arrange
         String firstName = "John";
         String lastName = "Unknown";
         String updatedPayload = "{\"firstName\":\"John\",\"lastName\":\"Unknown\",\"address\":\"54 River St\",\"city\":\"Culver\",\"zip\":\"97451\",\"phone\":\"842-874-7660\",\"email\":\"johnaboyd@wanadoo.com\"}";
@@ -144,6 +145,7 @@ public class PersonControllerTest {
         when(personService.updatePerson(eq(firstName), eq(lastName), any(Person.class)))
                 .thenThrow(new PersonNotFoundException());
 
+        // Act & Assert
         mockMvc.perform(put("/person/{firstName}/{lastName}", "John", "Unknown")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(updatedPayload))
@@ -152,11 +154,13 @@ public class PersonControllerTest {
 
     @Test
     public void testUpdatePerson_BadRequest() throws Exception {
+        // Arrange
         String firstName = "John";
         String lastName = "Boyd";
         // Payload invalide (champ manquant)
         String badPayload = "{\"firstName\":\"John\",\"lastName\":\"Boyd\",\"address\":\"54 River St\"}";
 
+        // Act & Assert
         mockMvc.perform(put("/person/{firstName}/{lastName}", "John", "Boyd")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(badPayload))
