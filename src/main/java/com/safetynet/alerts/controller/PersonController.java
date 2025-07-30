@@ -45,4 +45,14 @@ public class PersonController {
         Person updated = personService.updatePerson(firstName, lastName, person);
         return ResponseEntity.ok(updated);
     }
+
+    @DeleteMapping("/person/{firstName}/{lastName}")
+    public ResponseEntity<Void> deletePerson(
+            @PathVariable String firstName,
+            @PathVariable String lastName) {
+
+        personService.deletePerson(firstName, lastName);
+        return ResponseEntity.noContent().build();
+    }
+
 }

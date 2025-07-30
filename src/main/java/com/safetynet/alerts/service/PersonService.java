@@ -8,4 +8,6 @@ public interface PersonService {
     Person addPerson(Person person);
 
     Person updatePerson(String firstName, String lastName, Person person);
+
+    Person deletePerson(String firstName, String lastName);
 }

@@ -49,4 +49,17 @@ public class PersonServiceImpl implements PersonService {
         }
         throw new PersonNotFoundException("Person not found: " + firstName + " " + lastName);
     }
+
+    @Override
+    public Person deletePerson(String firstName, String lastName){
+        List<Person> persons = dataRepository.getDataContainer().getPersons();
+
+        for (Person person : persons){
+            if (person.getFirstName().equals(firstName) && person.getLastName().equals(lastName)) {
+                persons.remove(person);
+                return person;
+            }
+        }
+        throw new PersonNotFoundException("Person not found: " + firstName + " " + lastName);
+    }
 }

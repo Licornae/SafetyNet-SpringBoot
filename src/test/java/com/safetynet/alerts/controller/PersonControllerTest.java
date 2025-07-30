@@ -187,7 +187,5 @@ public class PersonControllerTest {
                 .andExpect(status().isNotFound())
                 .andExpect(content().string("Personne non trouvée"));
     }
-
-
 }
 
