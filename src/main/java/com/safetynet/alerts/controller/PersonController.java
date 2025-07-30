@@ -5,6 +5,7 @@ import com.safetynet.alerts.service.PersonService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,5 +34,10 @@ public class PersonController {
 
         Person savedPerson = personService.addPerson(person);
         return new ResponseEntity<>(savedPerson, HttpStatus.CREATED);
+    }
+
+    @PutMapping(value = "/person", produces = MediaType.APPLICATION_JSON_VALUE)
+    public Person updatePerson(@RequestParam String firstName, @RequestParam String lastName, @Valid @RequestBody Person person){
+        return personService.updatePerson(firstName, lastName, person);
     }
 }

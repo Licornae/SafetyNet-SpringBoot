@@ -6,4 +6,6 @@ public interface PersonService {
     Person getPerson(String firstName, String lastName);
 
     Person addPerson(Person person);
+
+    Person updatePerson(String firstName, String lastName, Person person);
 }

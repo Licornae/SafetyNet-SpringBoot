@@ -1,5 +1,6 @@
 package com.safetynet.alerts.controller;
 
+import com.safetynet.alerts.exception.PersonNotFoundException;
 import com.safetynet.alerts.model.Person;
 import com.safetynet.alerts.service.PersonService;
 import org.junit.jupiter.api.Test;
@@ -14,6 +15,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -111,22 +113,22 @@ public class PersonControllerTest {
     @Test
     public void testUpdatePerson_Successful() throws Exception {
         // Arrange
-        String lastName = "John";
-        String firstName = "Boyd";
-        String updatedPayload = "{\"address\":\"54 River St\",\"city\":\"Culver\",\"zip\":\"97451\",\"phone\":\"842-874-7660\",\"email\":\"johnaboyd@wanadoo.com\"}";
+        String firstName = "John";
+        String lastName = "Boyd";
+        String updatedPayload = "{\"firstName\":\"John\",\"lastName\":\"Boyd\",\"address\":\"54 River St\",\"city\":\"Culver\",\"zip\":\"97451\",\"phone\":\"842-874-7660\",\"email\":\"johnaboyd@wanadoo.com\"}";
 
-        when(personService.updatePerson(eq(lastName), eq(firstName), any(Person.class)))
-                .thenReturn(new Person(lastName, firstName, "54 River St", "Culver", "97451","842-874-7660","johnaboyd@wanadoo.com"));
+        when(personService.updatePerson(eq(firstName), eq(lastName), any(Person.class)))
+                .thenReturn(new Person(firstName, lastName, "54 River St", "Culver", "97451","842-874-7660","johnaboyd@wanadoo.com"));
 
         // Act & Assert
         mockMvc.perform(put("/person")
-                        .param("lastName", lastName)
                         .param("firstName", firstName)
+                        .param("lastName", lastName)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(updatedPayload))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.lastName").value("John"))
-                .andExpect(jsonPath("$.firstName").value("Boyd"))
+                .andExpect(jsonPath("$.firstName").value("John"))
+                .andExpect(jsonPath("$.lastName").value("Boyd"))
                 .andExpect(jsonPath("$.address").value("54 River St"))
                 .andExpect(jsonPath("$.city").value("Culver"))
                 .andExpect(jsonPath("$.zip").value("97451"))
@@ -137,16 +139,16 @@ public class PersonControllerTest {
 
     @Test
     public void testUpdatePerson_NotFound() throws Exception {
+        String firstName = "John";
         String lastName = "Unknown";
-        String firstName = "Boyd";
-        String updatedPayload = "{\"address\":\"54 River St\",\"city\":\"Culver\",\"zip\":\"97451\",\"phone\":\"842-874-7660\",\"email\":\"johnaboyd@wanadoo.com\"}";
+        String updatedPayload = "{\"firstName\":\"John\",\"lastName\":\"Unknown\",\"address\":\"54 River St\",\"city\":\"Culver\",\"zip\":\"97451\",\"phone\":\"842-874-7660\",\"email\":\"johnaboyd@wanadoo.com\"}";
 
-        when(personService.updatePerson(eq(lastName), eq(firstName), any(Person.class)))
+        when(personService.updatePerson(eq(firstName), eq(lastName), any(Person.class)))
                 .thenThrow(new PersonNotFoundException());
 
         mockMvc.perform(put("/person")
-                        .param("lastName", lastName)
                         .param("firstName", firstName)
+                        .param("lastName", lastName)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(updatedPayload))
                 .andExpect(status().isNotFound());
@@ -154,14 +156,14 @@ public class PersonControllerTest {
 
     @Test
     public void testUpdatePerson_BadRequest() throws Exception {
-        String lastName = "John";
-        String firstName = "Boyd";
+        String firstName = "John";
+        String lastName = "Boyd";
         // Payload invalide (champ manquant)
-        String badPayload = "{\"address\":\"54 River St\"}";
+        String badPayload = "{\"firstName\":\"John\",\"lastName\":\"Boyd\",\"address\":\"54 River St\"}";
 
         mockMvc.perform(put("/person")
-                        .param("lastName", lastName)
                         .param("firstName", firstName)
+                        .param("lastName", lastName)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(badPayload))
                 .andExpect(status().isBadRequest());
