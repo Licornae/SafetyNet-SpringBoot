@@ -36,8 +36,13 @@ public class PersonController {
         return new ResponseEntity<>(savedPerson, HttpStatus.CREATED);
     }
 
-    @PutMapping(value = "/person", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Person updatePerson(@RequestParam String firstName, @RequestParam String lastName, @Valid @RequestBody Person person){
-        return personService.updatePerson(firstName, lastName, person);
+    @PutMapping(value = "/person/{firstName}/{lastName}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Person> updatePerson(
+            @PathVariable String firstName,
+            @PathVariable String lastName,
+            @Valid @RequestBody Person person) {
+
+        Person updated = personService.updatePerson(firstName, lastName, person);
+        return ResponseEntity.ok(updated);
     }
 }

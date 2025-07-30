@@ -10,6 +10,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
@@ -121,9 +122,7 @@ public class PersonControllerTest {
                 .thenReturn(new Person(firstName, lastName, "54 River St", "Culver", "97451","842-874-7660","johnaboyd@wanadoo.com"));
 
         // Act & Assert
-        mockMvc.perform(put("/person")
-                        .param("firstName", firstName)
-                        .param("lastName", lastName)
+        mockMvc.perform(put("/person/{firstName}/{lastName}", "John", "Boyd")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(updatedPayload))
                 .andExpect(status().isOk())
@@ -146,9 +145,7 @@ public class PersonControllerTest {
         when(personService.updatePerson(eq(firstName), eq(lastName), any(Person.class)))
                 .thenThrow(new PersonNotFoundException());
 
-        mockMvc.perform(put("/person")
-                        .param("firstName", firstName)
-                        .param("lastName", lastName)
+        mockMvc.perform(put("/person/{firstName}/{lastName}", "John", "Unknown")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(updatedPayload))
                 .andExpect(status().isNotFound());
@@ -161,13 +158,10 @@ public class PersonControllerTest {
         // Payload invalide (champ manquant)
         String badPayload = "{\"firstName\":\"John\",\"lastName\":\"Boyd\",\"address\":\"54 River St\"}";
 
-        mockMvc.perform(put("/person")
-                        .param("firstName", firstName)
-                        .param("lastName", lastName)
+        mockMvc.perform(put("/person/{firstName}/{lastName}", "John", "Boyd")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(badPayload))
                 .andExpect(status().isBadRequest());
     }
-
 }
 
