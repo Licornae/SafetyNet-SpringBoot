@@ -10,13 +10,11 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -46,6 +44,7 @@ public class PersonControllerTest {
 
         when(personService.getPerson("John", "Boyd")).thenReturn(mockPerson);
 
+        // Act & Assert
         mockMvc.perform(get("/person")
                         .param("firstName", "John")
                         .param("lastName", "Boyd"))
@@ -64,9 +63,7 @@ public class PersonControllerTest {
         // Arrange
         Person newPerson = new Person("Jane","Doe","56 River St", "Culver", "97451", "841-874-7650", "janedoe@email.com");
 
-        when(personService.addPerson(
-                any(Person.class))
-        ).thenReturn(newPerson);
+        when(personService.addPerson(any(Person.class))).thenReturn(newPerson);
 
         // Act & Assert
         mockMvc.perform(post("/person")
@@ -91,6 +88,7 @@ public class PersonControllerTest {
         // Simule que la personne existe déjà
         when(personService.getPerson(existing.getFirstName(), existing.getLastName())).thenReturn(existing);
 
+        // Act & Assert
         mockMvc.perform(post("/person")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(existing))
@@ -104,6 +102,7 @@ public class PersonControllerTest {
         // Arrange
         Person invalidPerson = new Person("", "Doe", "56 River St", "Culver", "97451", "841-874-7650", "janedoe@email.com");
 
+        // Act & Assert
         mockMvc.perform(post("/person")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(invalidPerson))
@@ -163,5 +162,32 @@ public class PersonControllerTest {
                         .content(badPayload))
                 .andExpect(status().isBadRequest());
     }
+
+    @Test
+    public void testDeletePerson_Successful() throws Exception {
+        // Arrange
+        String firstName = "John";
+        String lastName = "Boyd";
+
+        // Act & Assert
+        mockMvc.perform(delete("/person/{firstName}/{lastName}", firstName, lastName))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    public void testDeletePerson_NotFound() throws Exception {
+        // Arrange
+        String firstName = "Jane";
+        String lastName = "Unknown";
+
+        doThrow(new PersonNotFoundException("Personne non trouvée")).when(personService).deletePerson(firstName, lastName);
+
+        // Act & Assert
+        mockMvc.perform(delete("/person/{firstName}/{lastName}", firstName, lastName))
+                .andExpect(status().isNotFound())
+                .andExpect(content().string("Personne non trouvée"));
+    }
+
+
 }
 
