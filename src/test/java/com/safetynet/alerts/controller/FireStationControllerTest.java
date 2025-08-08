@@ -13,6 +13,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -31,11 +32,25 @@ public class FireStationControllerTest {
     private FireStationService fireStationService;
 
     @Test
+    void getStationNumberByAddress_ReturnsStationNumber() throws Exception {
+        // Arrange
+        String address = "1509 Culver St";
+        FireStation mockStation = new FireStation(address, "3");
+        when(fireStationService.getFireStation(address)).thenReturn(mockStation);
+
+        // Act & Assert
+        mockMvc.perform(get("/firestation").param("address", address))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.station").value("3"))
+                .andExpect(jsonPath("$.address").value(address));
+    }
+
+    @Test
     public void whenAddFireStation_Successful() throws Exception {
         // Arrange
         FireStation newfireStation = new FireStation("1509 Culver St", "3");
 
-        when(fireStationService.addFireStation(any(FireStation.class)).thenreturn(newfireStation));
+        when(fireStationService.addFireStation(any(FireStation.class))).thenReturn(newfireStation);
 
         // Act & Assert
         mockMvc.perform(post("/firestation")
@@ -59,7 +74,8 @@ public class FireStationControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(duplicate)))
                 .andExpect(status().isConflict())
-                .andExpect(content().string("Mapping caserne/adresse existe déjà !"));
+                .andExpect(content().string("Cette adresse renseigne déjà une station"));
     }
 
 }
+
