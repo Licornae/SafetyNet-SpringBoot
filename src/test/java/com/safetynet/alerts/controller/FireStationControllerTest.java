@@ -1,9 +1,9 @@
 package com.safetynet.alerts.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.safetynet.alerts.exception.PersonNotFoundException;
+import com.safetynet.alerts.exception.AddressNotFoundException;
 import com.safetynet.alerts.model.FireStation;
-import com.safetynet.alerts.model.Person;
+
 import com.safetynet.alerts.service.FireStationService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -104,7 +104,7 @@ public class FireStationControllerTest {
         String updatedPayload = "{\"address\":\"Unknown\",\"station\":\"2\"}";
 
         when(fireStationService.updateStationAddress(eq(address), any(FireStation.class)))
-                .thenThrow(new AdressNotFoundException());
+                .thenThrow(new AddressNotFoundException());
 
         // Act & Assert
         mockMvc.perform(put("/firestation/{address}", "Unknown")
@@ -120,11 +120,10 @@ public class FireStationControllerTest {
         String badPayload = "{\"address\":\"1509 Culver St\"}";
 
         // Act & Assert
-        mockMvc.perform(put("/person/{address}", "1509 Culver St")
+        mockMvc.perform(put("/firestation/{address}", "1509 Culver St")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(badPayload))
                 .andExpect(status().isBadRequest());
     }
-
 }
 

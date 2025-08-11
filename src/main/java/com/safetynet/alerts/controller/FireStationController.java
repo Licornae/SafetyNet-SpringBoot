@@ -25,7 +25,7 @@ public class FireStationController {
         if (fireStation == null) {
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND)
-                    .body("Aucune caserne associée à cette adresse");
+                    .body("No fire station associated with this address");
         }
         return ResponseEntity.ok(fireStation);
     }
@@ -34,10 +34,17 @@ public class FireStationController {
     public ResponseEntity<?> addFireStation(@Valid @RequestBody FireStation fireStation) {
         FireStation existing = fireStationService.getFireStation(fireStation.getAddress());
         if (existing != null) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("Cette adresse renseigne déjà une station");
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("This address is already assigned to a station");
         }
-
         FireStation savedFireStation = fireStationService.addFireStation(fireStation);
         return new ResponseEntity<>(savedFireStation, HttpStatus.CREATED);
+    }
+
+    @PutMapping("/firestation/{address}")
+    public ResponseEntity<FireStation> updateStationAddress(
+            @PathVariable String address,
+            @Valid @RequestBody FireStation updatedFireStationAddress) {
+        FireStation updatedStation = fireStationService.updateStationAddress(address, updatedFireStationAddress);
+        return ResponseEntity.ok(updatedStation);
     }
 }

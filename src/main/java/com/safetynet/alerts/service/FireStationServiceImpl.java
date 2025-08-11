@@ -1,9 +1,12 @@
 package com.safetynet.alerts.service;
 
+import com.safetynet.alerts.exception.AddressNotFoundException;
 import com.safetynet.alerts.model.FireStation;
 import com.safetynet.alerts.repository.DataRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class FireStationServiceImpl implements FireStationService {
@@ -27,5 +30,18 @@ public class FireStationServiceImpl implements FireStationService {
     public FireStation addFireStation(FireStation fireStation) {
         dataRepository.getDataContainer().getFirestations().add(fireStation);
         return fireStation;
+    }
+
+    @Override
+    public FireStation updateStationAddress(String address, FireStation updatedFireStationAddress) {
+        List<FireStation> fireStations = dataRepository.getDataContainer().getFirestations();
+
+        for (FireStation fireStation : fireStations){
+            if (fireStation.getAddress().equals(address)){
+                fireStation.setStation(updatedFireStationAddress.getStation());
+                return fireStation;
+            }
+        }
+        throw new AddressNotFoundException("Address not found : " + address);
     }
 }
