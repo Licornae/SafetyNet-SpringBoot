@@ -33,8 +33,10 @@ public class FireStationControllerTest {
     @MockitoBean
     private FireStationService fireStationService;
 
+    //GET
+
     @Test
-    void getStationNumberByAddress_ReturnsStationNumber() throws Exception {
+    void testGetStationNumberByAddress_ReturnsStationNumber() throws Exception {
         // Arrange
         String address = "1509 Culver St";
         FireStation mockStation = new FireStation(address, "3");
@@ -47,8 +49,10 @@ public class FireStationControllerTest {
                 .andExpect(jsonPath("$.address").value(address));
     }
 
+    //POST
+
     @Test
-    public void whenAddFireStation_Successful() throws Exception {
+    public void testAddFireStation_Successful() throws Exception {
         // Arrange
         FireStation newfireStation = new FireStation("1509 Culver St", "3");
 
@@ -65,7 +69,7 @@ public class FireStationControllerTest {
     }
 
     @Test
-    void addFireStation_Duplicate_ReturnsConflict() throws Exception {
+    void testAddFireStation_ExistingFireStation_ReturnsConflict() throws Exception {
         // Arrange
         FireStation duplicate = new FireStation("1509 Culver St", "3");
 
@@ -76,8 +80,10 @@ public class FireStationControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(duplicate)))
                 .andExpect(status().isConflict())
-                .andExpect(content().string("Cette adresse renseigne déjà une station"));
+                .andExpect(content().string("This address already refers to a station"));
     }
+
+    //PUT
 
     @Test
     public void testUpdateStationAddress_Successful() throws Exception {
@@ -125,5 +131,30 @@ public class FireStationControllerTest {
                         .content(badPayload))
                 .andExpect(status().isBadRequest());
     }
+
+    //DELETE
+
+    @Test
+    void testDeleteFireStation_Successful() throws Exception {
+        String address = "1509 Culver St";
+        when(fireStationService.deleteFireStationByAddress(address)).thenReturn(true);
+
+        mockMvc.perform(delete("/firestation").param("address", address))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    void testDeleteFireStation_NotFound() throws Exception {
+        String address = "unknown";
+        when(fireStationService.deleteFireStationByAddress(address)).thenReturn(false);
+
+        mockMvc.perform(delete("/firestation").param("address", address))
+                .andExpect(status().isNotFound());
+    }
+
+
+
+
+
 }
 
