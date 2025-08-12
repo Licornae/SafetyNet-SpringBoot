@@ -34,7 +34,7 @@ public class FireStationController {
     public ResponseEntity<?> addFireStation(@Valid @RequestBody FireStation fireStation) {
         FireStation existing = fireStationService.getFireStation(fireStation.getAddress());
         if (existing != null) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("This address is already assigned to a station");
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("This address already refers to a station");
         }
         FireStation savedFireStation = fireStationService.addFireStation(fireStation);
         return new ResponseEntity<>(savedFireStation, HttpStatus.CREATED);
@@ -47,4 +47,14 @@ public class FireStationController {
         FireStation updatedStation = fireStationService.updateStationAddress(address, updatedFireStationAddress);
         return ResponseEntity.ok(updatedStation);
     }
+
+    @DeleteMapping("/firestation")
+    public ResponseEntity<Void> deleteFireStationByAddress(@RequestParam String address) {
+        boolean deleted = fireStationService.deleteFireStationByAddress(address);
+        if(deleted) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.notFound().build();
+    }
+
 }
