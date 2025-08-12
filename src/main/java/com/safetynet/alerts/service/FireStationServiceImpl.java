@@ -44,4 +44,10 @@ public class FireStationServiceImpl implements FireStationService {
         }
         throw new AddressNotFoundException("Address not found : " + address);
     }
+
+    @Override
+    public boolean deleteFireStationByAddress(String address) {
+        List<FireStation> fireStations = dataRepository.getDataContainer().getFirestations();
+        return fireStations.removeIf(st -> st.getAddress().equals(address));
+    }
 }
