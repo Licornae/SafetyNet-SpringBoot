@@ -1,8 +1,7 @@
 package com.safetynet.alerts.service;
 
-import org.springframework.stereotype.Service;
+import com.safetynet.alerts.model.MedicalRecord;
 
-@Service
-public class MedicalRecordService {
-    // TODO méthodes sur les dossiers médicaux
+public interface MedicalRecordService {
+    MedicalRecord getMedicalRecord(String firstName, String lastName);
 }
