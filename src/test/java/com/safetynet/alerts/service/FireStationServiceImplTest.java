@@ -14,7 +14,7 @@ public class FireStationServiceImplTest {
     private FireStationService fireStationService;
 
     @Test
-    public void whenFindingExistingFireStation_thenReturnsCorrectFireStation() {
+    public void testWhenFindingExistingFireStation_thenReturnsCorrectFireStation() {
         // Arrange : cette adresse doit exister dans data.json
         String address = "1509 Culver St";
 
@@ -28,7 +28,7 @@ public class FireStationServiceImplTest {
     }
 
     @Test
-    public void whenFindingUnknownFireStation_thenReturnsNull() {
+    public void testWhenFindingUnknownFireStation_thenReturnsNull() {
         // Arrange
         String address = "Unknown";
 
@@ -37,6 +37,28 @@ public class FireStationServiceImplTest {
 
         // Assert
         assertNull(station, "An unknown address should return null");
+    }
+
+    @Test
+    public void testWhenDeletingExistingFireStationAddress_thenAddressIsRemoved() {
+        // Arrange
+        String address = "1509 Culver St";
+        fireStationService.addFireStation(new FireStation(address, "3"));
+        // Act
+        boolean deleted = fireStationService.deleteFireStationByAddress(address);
+        // Assert
+        assertTrue(deleted, "Should return true for an existing address");
+        assertNull(fireStationService.getFireStation(address), "The address should not exist after deletion");
+    }
+
+    @Test
+    public void whenDeletingUnknownFireStationAddress_thenReturnFalse() {
+        // Arrange
+        String unknownAddress = "Unknown Address";
+        // Act
+        boolean deleted = fireStationService.deleteFireStationByAddress(unknownAddress);
+        // Assert
+        assertFalse(deleted, "Delete an unknown address should return false");
     }
 
 }
