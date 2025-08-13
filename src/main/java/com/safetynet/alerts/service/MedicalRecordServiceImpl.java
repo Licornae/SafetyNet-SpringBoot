@@ -1,9 +1,12 @@
 package com.safetynet.alerts.service;
 
+import com.safetynet.alerts.exception.MedicalRecordNotFoundException;
 import com.safetynet.alerts.model.MedicalRecord;
 import com.safetynet.alerts.repository.DataRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class MedicalRecordServiceImpl implements MedicalRecordService {
@@ -26,6 +29,21 @@ public class MedicalRecordServiceImpl implements MedicalRecordService {
     public MedicalRecord addMedicalRecord(MedicalRecord medicalRecord) {
         dataRepository.getDataContainer().getMedicalrecords().add(medicalRecord);
         return medicalRecord;
+    }
+
+    @Override
+    public MedicalRecord updateMedicalRecord(String firstName, String lastName, MedicalRecord updatedMedicalRecord) {
+        List<MedicalRecord> medicalRecords = dataRepository.getDataContainer().getMedicalrecords();
+
+        for(MedicalRecord medicalRecord : medicalRecords){
+            if(medicalRecord.getFirstName().equals(firstName) && medicalRecord.getLastName().equals(lastName)){
+                medicalRecord.setBirthdate(updatedMedicalRecord.getBirthdate());
+                medicalRecord.setMedications(updatedMedicalRecord.getMedications());
+                medicalRecord.setAllergies(updatedMedicalRecord.getMedications());
+                return medicalRecord;
+            }
+        }
+        throw new MedicalRecordNotFoundException("Medical record not found for: " + firstName + " " + lastName);
     }
 
 }

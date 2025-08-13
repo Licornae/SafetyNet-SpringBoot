@@ -5,6 +5,7 @@ import com.safetynet.alerts.service.MedicalRecordService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,5 +33,14 @@ public class MedicalRecordController {
 
         MedicalRecord savedMedicalRecord = medicalRecordService.addMedicalRecord(medicalRecord);
         return new ResponseEntity<>(savedMedicalRecord, HttpStatus.CREATED);
+    }
+
+    @PutMapping(value = "/medicalRecord/{firstName}/{lastName}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<MedicalRecord> updateMedicalRecord(
+            @PathVariable String firstName,
+            @PathVariable String lastName,
+            @Valid @RequestBody MedicalRecord medicalRecord){
+        MedicalRecord updatedMedicalRecord = medicalRecordService.updateMedicalRecord(firstName, lastName, medicalRecord);
+        return ResponseEntity.ok(updatedMedicalRecord);
     }
 }

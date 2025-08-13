@@ -1,6 +1,7 @@
 package com.safetynet.alerts.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.safetynet.alerts.exception.MedicalRecordNotFoundException;
 import com.safetynet.alerts.model.MedicalRecord;
 import com.safetynet.alerts.service.MedicalRecordService;
 import org.junit.jupiter.api.Test;
@@ -126,7 +127,7 @@ public class MedicalRecordControllerTest {
         // Arrange
         String firstName = "John";
         String lastName = "Boyd";
-        String updatedPayload = "{\"firstName\":\"John\",\"lastName\":\"Boyd\",\"birthdate\":\"03/06/1999\",\"medications\":\"aznol:350mg\", \"hydrapermazol:100mg\",\"alprazolam:0,25mg\",\"allergies\":\"nillacilan\",\"Bet v1\"}";
+        String updatedPayload = "{\"firstName\":\"John\", \"lastName\":\"Boyd\", \"birthdate\":\"03/06/1999\", \"medications\":[\"aznol:350mg\", \"hydrapermazol:100mg\", \"alprazolam:0,25mg\"], \"allergies\":[\"nillacilan\",\"Bet v1\"]}";
 
         when(medicalRecordService.updateMedicalRecord(eq(firstName), eq(lastName), any(MedicalRecord.class)))
                 .thenReturn(new MedicalRecord(firstName,lastName,"03/06/1999", List.of("aznol:350mg", "hydrapermazol:100mg", "alprazolam:0,25mg"), List.of("nillacilan","Bet v1")));
@@ -151,7 +152,7 @@ public class MedicalRecordControllerTest {
         // Arrange
         String firstName = "John";
         String lastName = "Unknown";
-        String updatedPayload = "{\"firstName\":\"John\",\"lastName\":\"Unknown\",\"birthdate\":\"03/06/1999\",\"medications\":\"aznol:350mg\", \"hydrapermazol:100mg\",\"alprazolam:0,25mg\",\"allergies\":\"nillacilan\",\"Bet v1\"}";
+        String updatedPayload = "{\"firstName\":\"John\", \"lastName\":\"Unknown\", \"birthdate\":\"03/06/1999\", \"medications\":[\"aznol:350mg\", \"hydrapermazol:100mg\", \"alprazolam:0,25mg\"], \"allergies\":[\"nillacilan\",\"Bet v1\"]}";
 
         when(medicalRecordService.updateMedicalRecord(eq(firstName), eq(lastName), any(MedicalRecord.class)))
                 .thenThrow(new MedicalRecordNotFoundException());
@@ -172,7 +173,7 @@ public class MedicalRecordControllerTest {
         String badPayload = "{\"firstName\":\"John\",\"lastName\":\"Boyd\"}";
 
         // Act & Assert
-        mockMvc.perform(put("/person/{firstName}/{lastName}", "John", "Boyd")
+        mockMvc.perform(put("/medicalRecord/{firstName}/{lastName}", "John", "Boyd")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(badPayload))
                 .andExpect(status().isBadRequest());
