@@ -22,4 +22,10 @@ public class MedicalRecordServiceImpl implements MedicalRecordService {
                         medicalRecord.getLastName().equals(lastName)).findFirst().orElse(null);
     }
 
+    @Override
+    public MedicalRecord addMedicalRecord(MedicalRecord medicalRecord) {
+        dataRepository.getDataContainer().getMedicalrecords().add(medicalRecord);
+        return medicalRecord;
+    }
+
 }

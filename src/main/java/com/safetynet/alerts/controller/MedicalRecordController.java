@@ -2,10 +2,11 @@ package com.safetynet.alerts.controller;
 
 import com.safetynet.alerts.model.MedicalRecord;
 import com.safetynet.alerts.service.MedicalRecordService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class MedicalRecordController {
@@ -20,5 +21,16 @@ public class MedicalRecordController {
     @GetMapping("/medicalRecord")
     public MedicalRecord getMedicalRecord(@RequestParam String firstName, @RequestParam String lastName){
         return medicalRecordService.getMedicalRecord(firstName,lastName);
+    }
+
+    @PostMapping("/medicalRecord")
+    public ResponseEntity<?> addMedicalRecord(@Valid @RequestBody MedicalRecord medicalRecord) {
+        MedicalRecord existing = medicalRecordService.getMedicalRecord(medicalRecord.getFirstName(), medicalRecord.getLastName());
+        if (existing != null) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("This person already have a medical record");
+        }
+
+        MedicalRecord savedMedicalRecord = medicalRecordService.addMedicalRecord(medicalRecord);
+        return new ResponseEntity<>(savedMedicalRecord, HttpStatus.CREATED);
     }
 }
