@@ -13,6 +13,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -66,7 +67,7 @@ public class MedicalRecordControllerTest {
                 List.of("nillacilan")
         );
 
-        when(medicalRecordService.addMedicalRecord(any(MedicalRecord.class)).thenReturn(newMedicalRecord));
+        when(medicalRecordService.addMedicalRecord(any(MedicalRecord.class))).thenReturn(newMedicalRecord);
 
         // Act & Assert
         mockMvc.perform(post("/medicalRecord")
@@ -117,5 +118,63 @@ public class MedicalRecordControllerTest {
                 )
                 .andExpect(status().isBadRequest())
                 .andExpect(content().string(org.hamcrest.Matchers.containsString("Birthdate required")));
+    }
+
+    //PUT
+    @Test
+    public void testUpdateMedicalRecord_Successful() throws Exception {
+        // Arrange
+        String firstName = "John";
+        String lastName = "Boyd";
+        String updatedPayload = "{\"firstName\":\"John\",\"lastName\":\"Boyd\",\"birthdate\":\"03/06/1999\",\"medications\":\"aznol:350mg\", \"hydrapermazol:100mg\",\"alprazolam:0,25mg\",\"allergies\":\"nillacilan\",\"Bet v1\"}";
+
+        when(medicalRecordService.updateMedicalRecord(eq(firstName), eq(lastName), any(MedicalRecord.class)))
+                .thenReturn(new MedicalRecord(firstName,lastName,"03/06/1999", List.of("aznol:350mg", "hydrapermazol:100mg", "alprazolam:0,25mg"), List.of("nillacilan","Bet v1")));
+
+        // Act & Assert
+        mockMvc.perform(put("/medicalRecord/{firstName}/{lastName}", "John", "Boyd")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(updatedPayload))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.firstName").value("John"))
+                .andExpect(jsonPath("$.lastName").value("Boyd"))
+                .andExpect(jsonPath("$.birthdate").value("03/06/1999"))
+                .andExpect(jsonPath("$.medications[0]").value("aznol:350mg"))
+                .andExpect(jsonPath("$.medications[1]").value("hydrapermazol:100mg"))
+                .andExpect(jsonPath("$.medications[2]").value("alprazolam:0,25mg"))
+                .andExpect(jsonPath("$.allergies[0]").value("nillacilan"))
+                .andExpect(jsonPath("$.allergies[1]").value("Bet v1"));
+    }
+
+    @Test
+    public void testUpdateMedicalRecord_NotFound() throws Exception {
+        // Arrange
+        String firstName = "John";
+        String lastName = "Unknown";
+        String updatedPayload = "{\"firstName\":\"John\",\"lastName\":\"Unknown\",\"birthdate\":\"03/06/1999\",\"medications\":\"aznol:350mg\", \"hydrapermazol:100mg\",\"alprazolam:0,25mg\",\"allergies\":\"nillacilan\",\"Bet v1\"}";
+
+        when(medicalRecordService.updateMedicalRecord(eq(firstName), eq(lastName), any(MedicalRecord.class)))
+                .thenThrow(new MedicalRecordNotFoundException());
+
+        // Act & Assert
+        mockMvc.perform(put("/medicalRecord/{firstName}/{lastName}", "John", "Unknown")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(updatedPayload))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void testUpdateMedicalRecord_BadRequest() throws Exception {
+        // Arrange
+        String firstName = "John";
+        String lastName = "Boyd";
+        // Payload invalide (champ manquant)
+        String badPayload = "{\"firstName\":\"John\",\"lastName\":\"Boyd\"}";
+
+        // Act & Assert
+        mockMvc.perform(put("/person/{firstName}/{lastName}", "John", "Boyd")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(badPayload))
+                .andExpect(status().isBadRequest());
     }
     }
