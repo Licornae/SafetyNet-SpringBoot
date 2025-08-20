@@ -46,4 +46,11 @@ public class MedicalRecordServiceImpl implements MedicalRecordService {
         throw new MedicalRecordNotFoundException("Medical record not found for: " + firstName + " " + lastName);
     }
 
+    @Override
+    public boolean deleteMedicalRecord(String firstName, String lastName) {
+        List<MedicalRecord> medicalRecords = dataRepository.getDataContainer().getMedicalrecords();
+        return medicalRecords.removeIf(medicalRecord -> medicalRecord.getFirstName().equals(firstName)
+                && medicalRecord.getLastName().equals(lastName));
+    }
+
 }
