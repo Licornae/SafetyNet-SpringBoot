@@ -186,6 +186,7 @@ public class MedicalRecordControllerTest {
         // Arrange
         String firstName = "John";
         String lastName = "Boyd";
+        when(medicalRecordService.deleteMedicalRecord(firstName, lastName)).thenReturn(true);
 
         // Act & Assert
         mockMvc.perform(delete("/medicalRecord/{firstName}/{lastName}", firstName, lastName))

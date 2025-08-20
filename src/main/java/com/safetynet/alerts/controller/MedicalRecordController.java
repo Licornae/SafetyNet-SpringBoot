@@ -43,4 +43,15 @@ public class MedicalRecordController {
         MedicalRecord updatedMedicalRecord = medicalRecordService.updateMedicalRecord(firstName, lastName, medicalRecord);
         return ResponseEntity.ok(updatedMedicalRecord);
     }
+
+    @DeleteMapping("/medicalRecord/{firstName}/{lastName}")
+    public ResponseEntity<Void> deleteMedicalRecord(
+            @PathVariable String firstName,
+            @PathVariable String lastName) {
+        boolean deleted = medicalRecordService.deleteMedicalRecord(firstName, lastName);
+        if(deleted) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.notFound().build();
+    }
 }
