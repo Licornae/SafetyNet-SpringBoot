@@ -15,6 +15,7 @@ import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doThrow;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -178,4 +179,32 @@ public class MedicalRecordControllerTest {
                         .content(badPayload))
                 .andExpect(status().isBadRequest());
     }
+
+    // DELETE
+    @Test
+    public void testDeleteMedicalRecord_Successful() throws Exception {
+        // Arrange
+        String firstName = "John";
+        String lastName = "Boyd";
+
+        // Act & Assert
+        mockMvc.perform(delete("/medicalRecord/{firstName}/{lastName}", firstName, lastName))
+                .andExpect(status().isNoContent());
     }
+
+    @Test
+    public void testDeleteMedicalRecord_NotFound() throws Exception {
+        // Arrange
+        String firstName = "Jane";
+        String lastName = "Unknown";
+
+        doThrow(new MedicalRecordNotFoundException("Medical record not found"))
+                .when(medicalRecordService).deleteMedicalRecord(firstName, lastName);
+
+        // Act & Assert
+        mockMvc.perform(delete("/medicalRecord/{firstName}/{lastName}", firstName, lastName))
+                .andExpect(status().isNotFound())
+                .andExpect(content().string("Medical record not found"));
+    }
+
+}
