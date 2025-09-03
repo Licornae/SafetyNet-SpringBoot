@@ -152,9 +152,27 @@ public class FireStationControllerTest {
                 .andExpect(status().isNotFound());
     }
 
+    @Test
+    void deleteByStation_ok_returns204() throws Exception {
+        //confirm=YES, le service supprime quelque chose
+        when(fireStationService.countByStation(eq("3"))).thenReturn(5);
+        when(fireStationService.deleteFireStationsByStation(eq("3"))).thenReturn(true);
 
+        mockMvc.perform(delete("/firestation")
+                        .param("station", "3")
+                        .param("confirm", "YES"))
+                .andExpect(status().isNoContent()); // 204
+    }
 
+    @Test
+    void deleteByStation_missingConfirm_returns400() throws Exception {
+        //pas de confirm => 400
+        when(fireStationService.countByStation(eq("3"))).thenReturn(5);
 
+        mockMvc.perform(delete("/firestation")
+                        .param("station", "3"))
+                .andExpect(status().isBadRequest());
+    }
 
 }
 
