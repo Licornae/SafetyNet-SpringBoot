@@ -1,5 +1,6 @@
 package com.safetynet.alerts.service;
 
+import com.safetynet.alerts.model.MedicalRecord;
 import com.safetynet.alerts.model.Person;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +16,7 @@ public class PersonServiceImplTest {
 
     @Test
     public void whenFindingExistingPerson_thenReturnsCorrectPerson() {
-        // Arrange : ces infos doivent exister dans data.json
+        // Arrange
         String firstName = "John";
         String lastName = "Boyd";
 
@@ -23,7 +24,7 @@ public class PersonServiceImplTest {
         Person person = personService.getPerson(firstName, lastName);
 
         // Assert
-        assertNotNull(person, "La personne recherchée doit exister");
+        assertNotNull(person, "The search person should exist");
         assertEquals("John", person.getFirstName());
         assertEquals("Boyd", person.getLastName());
         assertEquals("1509 Culver St",person.getAddress());
@@ -34,15 +35,33 @@ public class PersonServiceImplTest {
     }
 
     @Test
-    public void whenFindingUnknownPerson_thenReturnsNull() {
+    public void testWhenDeletingExistingPerson_thenItsRemoved() {
         // Arrange
-        String firstName = "Nonexistent";
-        String lastName = "Nobody";
+        String firstName = "John";
+        String lastName = "Boyd";
+        Person person = personService.getPerson(firstName, lastName);
+        assertNotNull(person, "Record must exist before deletion");
 
         // Act
-        Person person = personService.getPerson(firstName, lastName);
+        boolean deleted = personService.deletePerson("John", "Boyd");
 
         // Assert
-        assertNull(person, "Une personne inconnue doit renvoyer null");
+        assertTrue(deleted, "Should return true for an existing person");
+        assertNull(personService.getPerson("John", "Boyd"), "Person should not exist after deletion");
     }
+
+
+    @Test
+    public void testWhenDeletingUnknownPerson_thenReturnFalse() {
+        // Arrange
+        String firstName = "Unknown";
+        String lastName = "Person";
+
+        // Act
+        boolean deleted = personService.deletePerson(firstName, lastName);
+
+        // Assert
+        assertFalse(deleted, "Deleting an unknown person should return false");
+    }
+
 }

@@ -18,11 +18,12 @@ public class PersonServiceImpl implements PersonService {
     public PersonServiceImpl(DataRepository dataRepository) {
         this.dataRepository = dataRepository;
     }
+
     @Override
     public Person getPerson(String firstName, String lastName) {
         return dataRepository.getDataContainer().getPersons().stream()
-                .filter(p -> p.getFirstName().equals(firstName)
-                        && p.getLastName().equals(lastName))
+                .filter(person -> person.getFirstName().equals(firstName)
+                        && person.getLastName().equals(lastName))
                 .findFirst()
                 .orElse(null);
     }
@@ -51,13 +52,9 @@ public class PersonServiceImpl implements PersonService {
     }
 
     @Override
-    public void deletePerson(String firstName, String lastName){
+    public boolean deletePerson(String firstName, String lastName) {
         List<Person> persons = dataRepository.getDataContainer().getPersons();
-        boolean removed = persons.removeIf(
-                person -> person.getFirstName().equals(firstName) && person.getLastName().equals(lastName));
-
-            if (!removed){
-                throw new PersonNotFoundException("Person not found: " + firstName + " " + lastName);
-            }
+        return persons.removeIf(person -> person.getFirstName().equals(firstName)
+                && person.getLastName().equals(lastName));
     }
 }

@@ -85,8 +85,4 @@ public class MedicalRecordServiceImplTest {
         // Assert
         assertFalse(deleted, "Deleting an unknown MedicalRecord should return false");
     }
-
-
-
-
 }

@@ -29,7 +29,7 @@ public class PersonController {
         // Évite d’ajouter un doublon
         Person existing = personService.getPerson(person.getFirstName(), person.getLastName());
         if (existing != null) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("Cette personne existe déjà");
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("This person already exists");
         }
 
         Person savedPerson = personService.addPerson(person);
@@ -50,9 +50,10 @@ public class PersonController {
     public ResponseEntity<Void> deletePerson(
             @PathVariable String firstName,
             @PathVariable String lastName) {
-
-        personService.deletePerson(firstName, lastName);
-        return ResponseEntity.noContent().build();
+        boolean deleted = personService.deletePerson(firstName, lastName);
+        if(deleted) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.notFound().build();
     }
-
 }

@@ -30,8 +30,10 @@ public class PersonControllerTest {
     @MockitoBean
     private PersonService personService;
 
+    //GET
+
     @Test
-    public void whenGetPersonByFirstAndLastName_thenReturnAllFields() throws Exception {
+    public void testGetPersonByFirstAndLastName_ReturnsAllFields() throws Exception {
         // Simule une Person pour ce test
         Person mockPerson = new Person();
         mockPerson.setFirstName("John");
@@ -58,8 +60,10 @@ public class PersonControllerTest {
                 .andExpect(jsonPath("$.email").value("jaboyd@email.com"));
     }
 
+    //POST
+
     @Test
-    void addANewPerson_Successful() throws Exception {
+    void testAddANewPerson_Successful() throws Exception {
         // Arrange
         Person newPerson = new Person("Jane","Doe","56 River St", "Culver", "97451", "841-874-7650", "janedoe@email.com");
 
@@ -81,7 +85,7 @@ public class PersonControllerTest {
     }
 
     @Test
-    void addPerson_ExistingPerson_ReturnsConflict() throws Exception {
+    void testAddPerson_ExistingPerson_ReturnsConflict() throws Exception {
         // Arrange
         Person existing = new Person("Jane","Doe","56 River St", "Culver", "97451", "841-874-7650", "janedoe@email.com");
 
@@ -94,11 +98,11 @@ public class PersonControllerTest {
                         .content(objectMapper.writeValueAsString(existing))
                 )
                 .andExpect(status().isConflict())
-                .andExpect(content().string("Cette personne existe déjà"));
+                .andExpect(content().string("This person already exists"));
     }
 
     @Test
-    void addPerson_MissingFirstName_ReturnsBadRequest() throws Exception {
+    void testAddPerson_MissingFirstName_ReturnsBadRequest() throws Exception {
         // Arrange
         Person invalidPerson = new Person("", "Doe", "56 River St", "Culver", "97451", "841-874-7650", "janedoe@email.com");
 
@@ -109,6 +113,8 @@ public class PersonControllerTest {
                 )
                 .andExpect(status().isBadRequest());
     }
+
+    //PUT
 
     @Test
     public void testUpdatePerson_Successful() throws Exception {
@@ -167,11 +173,14 @@ public class PersonControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
+    //DELETE
+
     @Test
     public void testDeletePerson_Successful() throws Exception {
         // Arrange
         String firstName = "John";
         String lastName = "Boyd";
+        when(personService.deletePerson(firstName, lastName)).thenReturn(true);
 
         // Act & Assert
         mockMvc.perform(delete("/person/{firstName}/{lastName}", firstName, lastName))
@@ -184,12 +193,12 @@ public class PersonControllerTest {
         String firstName = "Jane";
         String lastName = "Unknown";
 
-        doThrow(new PersonNotFoundException("Personne non trouvée")).when(personService).deletePerson(firstName, lastName);
+        doThrow(new PersonNotFoundException("Person not found")).when(personService).deletePerson(firstName, lastName);
 
         // Act & Assert
         mockMvc.perform(delete("/person/{firstName}/{lastName}", firstName, lastName))
                 .andExpect(status().isNotFound())
-                .andExpect(content().string("Personne non trouvée"));
+                .andExpect(content().string("Person not found"));
     }
 }
 

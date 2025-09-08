@@ -27,5 +27,10 @@ public class DataRepository {
     public DataContainer getDataContainer() {
         return dataContainer;
     }
+
+    public void reloadData() {
+        loadData();
+    }
+
 }
 

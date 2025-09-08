@@ -207,5 +207,4 @@ public class MedicalRecordControllerTest {
                 .andExpect(status().isNotFound())
                 .andExpect(content().string("Medical record not found"));
     }
-
 }

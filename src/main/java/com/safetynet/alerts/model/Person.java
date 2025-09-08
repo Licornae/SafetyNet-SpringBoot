@@ -10,22 +10,22 @@ import jakarta.validation.constraints.NotBlank;
 @AllArgsConstructor
 public class Person {
 
-    @NotBlank (message = "Prénom obligatoire")
+    @NotBlank (message = "First name required")
     private String firstName;
 
-    @NotBlank (message = "Nom obligatoire")
+    @NotBlank (message = "Last name required")
     private String lastName;
 
-    @NotBlank (message = "Adresse obligatoire")
+    @NotBlank (message = "Address required")
     private String address;
 
-    @NotBlank (message = "Ville obligatoire")
+    @NotBlank (message = "City required")
     private String city;
 
-    @NotBlank (message = "Code postale obligatoire")
+    @NotBlank (message = "Zip required")
     private String zip;
 
-    @NotBlank (message = "Numéro de téléphone obligatoire")
+    @NotBlank (message = "Phone number required")
     private String phone;
 
     private String email;
