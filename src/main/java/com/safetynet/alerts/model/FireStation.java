@@ -10,10 +10,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class FireStation {
 
-    @NotBlank(message = "Adresse obligatoire")
+    @NotBlank(message = "Address required")
     private String address;
 
-    @NotBlank (message = "Numéro de station obligatoire")
+    @NotBlank (message = "Station number required")
     private String station;
 
 }

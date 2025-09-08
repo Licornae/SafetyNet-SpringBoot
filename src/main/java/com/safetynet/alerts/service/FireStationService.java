@@ -7,4 +7,7 @@ public interface FireStationService {
     FireStation addFireStation(FireStation fireStation);
     FireStation updateStationAddress(String address, FireStation updatedFireStationAddress);
     boolean deleteFireStationByAddress(String address);
+
+    boolean deleteFireStationsByStation(String station);
+    int countByStation(String station);
 }

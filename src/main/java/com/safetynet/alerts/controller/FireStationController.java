@@ -8,6 +8,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
 public class FireStationController {
 
@@ -57,4 +59,25 @@ public class FireStationController {
         return ResponseEntity.notFound().build();
     }
 
+    // DELETE by station
+    @DeleteMapping(value = "/firestation", params = "station")
+    public ResponseEntity<?> deleteFireStationsByStation(
+            @RequestParam String station,
+            @RequestParam(defaultValue = "false") boolean dryRun,
+            @RequestParam(required = false) String confirm) {
+
+        int count = fireStationService.countByStation(station);
+
+        if (dryRun) {
+            return ResponseEntity.ok(Map.of("station", station, "count", count));
+        }
+
+        if (!"YES".equalsIgnoreCase(confirm)) {
+            return ResponseEntity.badRequest()
+                    .body("Dangerous operation. Run dryRun first to see impact, then call with confirm=YES to proceed.");
+        }
+
+        boolean deleted = fireStationService.deleteFireStationsByStation(station);
+        return deleted ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
+    }
 }
