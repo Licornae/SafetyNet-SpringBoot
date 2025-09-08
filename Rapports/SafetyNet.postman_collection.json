@@ -1,0 +1,388 @@
+{
+	"info": {
+		"_postman_id": "72e84b32-3ae2-4e3e-9ab5-a00f23ad11ab",
+		"name": "SafetyNet",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "45936313"
+	},
+	"item": [
+		{
+			"name": "http://localhost:8080/person?firstName=John&lastName=Boyd",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/person?firstName=John&lastName=Boyd",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"person"
+					],
+					"query": [
+						{
+							"key": "firstName",
+							"value": "John"
+						},
+						{
+							"key": "lastName",
+							"value": "Boyd"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:8080/person",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"firstName\": \"Alice\",\r\n  \"lastName\": \"Dupont\",\r\n  \"address\": \"42 avenue de la Paix\",\r\n  \"city\": \"Paris\",\r\n  \"zip\": \"75000\",\r\n  \"phone\": \"0102030405\",\r\n  \"email\": \"alice.dupont@email.fr\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/person",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"person"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:8080/person/John/Boyd",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"firstName\": \"John\",\r\n  \"lastName\": \"Boyd\",\r\n  \"address\": \"84 River st\",\r\n  \"city\": \"Culver\",\r\n  \"zip\": \"97451\",\r\n  \"phone\": \"0102030405\",\r\n  \"email\": \"john.boyd@wanadoo.com\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/person/John/Boyd",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"person",
+						"John",
+						"Boyd"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:8080/person/John/Boyd",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/person/John/Boyd",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"person",
+						"John",
+						"Boyd"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:8080/firestation?address=1509 Culver St",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/firestation?address=1509 Culver St",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"firestation"
+					],
+					"query": [
+						{
+							"key": "address",
+							"value": "1509 Culver St"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:8080/firestation",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{ \"address\": \"1513 Culver St\", \"station\": \"3\" }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/firestation",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"firestation"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:8080/firestation/1509 Culver St",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{ \"address\": \"1509 Culver St\", \"station\": \"4\" }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/firestation/1509 Culver St",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"firestation",
+						"1509 Culver St"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:8080/firestation?address=1509 Culver St",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/firestation?address=1509 Culver St",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"firestation"
+					],
+					"query": [
+						{
+							"key": "address",
+							"value": "1509 Culver St"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:8080/medicalRecord?firstName=John&lastName=Boyd",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/medicalRecord?firstName=John&lastName=Boyd",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"medicalRecord"
+					],
+					"query": [
+						{
+							"key": "firstName",
+							"value": "John"
+						},
+						{
+							"key": "lastName",
+							"value": "Boyd"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:8080/medicalRecord",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{ \r\n    \"firstName\": \"Patrick\", \r\n    \"lastName\": \"Boyd\", \r\n    \"birthdate\": \"09/06/1964\", \r\n    \"medications\": [\"aznol:200mg\", \"hydrapermazol:100mg\", \"alprazolam\"], \r\n    \"allergies\": [\"nillacilan\", \"cat\"] \r\n    }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/medicalRecord",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"medicalRecord"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:8080/medicalRecord/John/Boyd",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{ \r\n    \"firstName\": \"John\", \r\n    \"lastName\": \"Boyd\", \r\n    \"birthdate\": \"04/06/1984\", \r\n    \"medications\": [\"aznol:200mg\", \"ibupurin:400mg\", \"alprazolam:0,25mg\"], \r\n    \"allergies\": [\"peanut\"] }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/medicalRecord/John/Boyd",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"medicalRecord",
+						"John",
+						"Boyd"
+					],
+					"query": [
+						{
+							"key": "firstName",
+							"value": "John",
+							"disabled": true
+						},
+						{
+							"key": "lastName",
+							"value": "Boyd",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:8080/firestation?station=4&dryRun=true",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/firestation?station=4&dryRun=true",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"firestation"
+					],
+					"query": [
+						{
+							"key": "station",
+							"value": "4"
+						},
+						{
+							"key": "dryRun",
+							"value": "true"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:8080/firestation?station=4&confirm=YES",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/firestation?station=4&confirm=YES",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"firestation"
+					],
+					"query": [
+						{
+							"key": "station",
+							"value": "4"
+						},
+						{
+							"key": "confirm",
+							"value": "YES"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
