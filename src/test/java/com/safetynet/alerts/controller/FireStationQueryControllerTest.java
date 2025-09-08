@@ -32,10 +32,10 @@ public class FireStationQueryControllerTest {
     @Test
     void getCoverageByStation_returnsPersonsAndCounts() throws Exception {
         var persons = List.of(
-                new PersonDTO("John","Boyd","1509 Culver St","841-874-6512"),
-                new PersonDTO("Jacob","Boyd","1509 Culver St","841-874-6513")
+                new PersonDTO("John","Boyd",41,"1509 Culver St","841-874-6512"),
+                new PersonDTO("Jacob","Boyd",36,"1509 Culver St","841-874-6513")
         );
-        var dto = new FirestationCoverageDTO(persons, 2, 1);
+        var dto = new FirestationCoverageDTO(1,persons, 2, 1);
         when(queryService.getCoverageByStation("1")).thenReturn(dto);
 
         mockMvc.perform(get("/firestation")
