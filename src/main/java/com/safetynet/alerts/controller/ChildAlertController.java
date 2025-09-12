@@ -4,7 +4,6 @@ import com.safetynet.alerts.dto.ChildAlertDTO;
 import com.safetynet.alerts.service.ChildAlertService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;

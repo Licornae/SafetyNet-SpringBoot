@@ -30,7 +30,7 @@ public class FireStationQueryControllerTest {
     FireStationQueryService queryService;
 
     @Test
-    void getCoverageByStation_returnsPersonsAndCounts() throws Exception {
+    public void testGetCoverageByStation_ReturnsPersonsAndCounts() throws Exception {
         var persons = List.of(
                 new PersonDTO("John","Boyd",41,"1509 Culver St","841-874-6512"),
                 new PersonDTO("Jacob","Boyd",36,"1509 Culver St","841-874-6513")

@@ -1,7 +1,8 @@
 package com.safetynet.alerts.service;
 
-import com.safetynet.alerts.model.MedicalRecord;
 import com.safetynet.alerts.model.Person;
+import com.safetynet.alerts.repository.DataRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -14,8 +15,16 @@ public class PersonServiceImplTest {
     @Autowired
     private PersonService personService;
 
+    @Autowired
+    DataRepository dataRepository;
+
+    @BeforeEach
+    void resetData() {
+        dataRepository.reloadData();
+    }
+
     @Test
-    public void whenFindingExistingPerson_thenReturnsCorrectPerson() {
+    public void testWhenFindingExistingPerson_thenReturnsCorrectPerson() {
         // Arrange
         String firstName = "John";
         String lastName = "Boyd";

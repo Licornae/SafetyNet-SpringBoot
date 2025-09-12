@@ -26,9 +26,11 @@ public class FireStationQueryServiceImplTest {
     }
 
     @Test
-    void getCoverageByStation_shouldWorkWithRealDataset() {
+    void testGetCoverageByStation_shouldWorkWithRealDataset() {
 
-        FirestationCoverageDTO dto = service.getCoverageByStation("1");
+        String station = "1";
+
+        FirestationCoverageDTO dto = service.getCoverageByStation(station);
 
         assertNotNull(dto.getPersons(), "The firestation should cover persons");
         assertEquals(dto.getPersons().size(), dto.getAdults() + dto.getChildren());
@@ -36,19 +38,19 @@ public class FireStationQueryServiceImplTest {
     }
 
     @Test
-    void getCoverageByStation_unknownStation_throws() {
+    void testGetCoverageByStation_unknownStation_throws() {
         assertThrows(AddressNotFoundException.class,
                 () -> service.getCoverageByStation("20"));
     }
 
     @Test
-    void getCoverageByStation_blankStation_throws() {
+    void testGetCoverageByStation_blankStation_throws() {
         assertThrows(IllegalArgumentException.class,
                 () -> service.getCoverageByStation(" "));
     }
 
     @Test
-    void getCoverageByStation_nullStation_throws() {
+    void testGetCoverageByStation_nullStation_throws() {
         assertThrows(IllegalArgumentException.class,
                 () -> service.getCoverageByStation(null));
     }

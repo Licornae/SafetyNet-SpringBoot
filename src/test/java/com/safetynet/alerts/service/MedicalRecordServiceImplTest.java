@@ -1,6 +1,5 @@
 package com.safetynet.alerts.service;
 
-import com.safetynet.alerts.model.FireStation;
 import com.safetynet.alerts.model.MedicalRecord;
 import com.safetynet.alerts.repository.DataRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,7 +26,7 @@ public class MedicalRecordServiceImplTest {
     }
 
     @Test
-    public void whenFindingMedicalRecord_thenReturnsCorrectMedicalRecord(){
+    public void testWhenFindingMedicalRecord_thenReturnsCorrectMedicalRecord(){
         // Arrange
         String firstName = "John";
         String lastName = "Boyd";
@@ -45,7 +44,7 @@ public class MedicalRecordServiceImplTest {
     }
 
     @Test
-    public void whenFindingUnknownPerson_thenReturnsNoMedicalRecord() {
+    public void testWhenFindingUnknownPerson_thenReturnsNoMedicalRecord() {
         // Arrange
         String firstName = "Nonexistent";
         String lastName = "Nobody";

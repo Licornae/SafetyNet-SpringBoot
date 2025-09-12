@@ -25,7 +25,7 @@ public class FireStationServiceImplTest {
 
     @Test
     public void testWhenFindingExistingFireStation_thenReturnsCorrectFireStation() {
-        // Arrange : cette adresse doit exister dans data.json
+        // Arrange
         String address = "1509 Culver St";
 
         // Act
@@ -62,7 +62,7 @@ public class FireStationServiceImplTest {
     }
 
     @Test
-    public void whenDeletingUnknownFireStationAddress_thenReturnFalse() {
+    public void testWhenDeletingUnknownFireStationAddress_thenReturnFalse() {
         // Arrange
         String unknownAddress = "Unknown Address";
         // Act
