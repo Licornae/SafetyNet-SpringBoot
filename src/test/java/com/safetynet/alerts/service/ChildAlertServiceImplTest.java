@@ -1,10 +1,14 @@
 package com.safetynet.alerts.service;
 
+import com.safetynet.alerts.dto.ChildAlertDTO;
+import com.safetynet.alerts.exception.AddressNotFoundException;
 import com.safetynet.alerts.repository.DataRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -41,7 +45,8 @@ public class ChildAlertServiceImplTest {
         children.forEach(child -> {
             assertNotNull(child.getFamilyMembers(), "A child can't live alone");
 
-            assertTrue(child.getFamilyMembers.size() =4, "This child live with 3 adults and another child");
+            assertEquals(4, child.getFamilyMembers().size(),
+                    "This child lives with 3 adults and another child");
 
             assertTrue(child.getFamilyMembers().stream()
                             .noneMatch(familyMember -> familyMember.getFirstName().equals(child.getFirstName()) &&
@@ -59,9 +64,9 @@ public class ChildAlertServiceImplTest {
 
     @Test
     void testGetChildrenByAddress_blankAddress_throws() {
-        assertThrows(IllegalArgumentException.class,
+        assertThrows(AddressNotFoundException.class,
                 () -> childAlertService.getChildrenByAddress(" "),
-                "Blank address should throw IllegalArgumentException");
+                "Blank address should throw AddressNotFoundException");
     }
 
 }
