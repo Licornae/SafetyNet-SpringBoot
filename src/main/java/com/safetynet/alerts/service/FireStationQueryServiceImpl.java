@@ -26,6 +26,7 @@ import java.util.stream.Collectors;
 public class FireStationQueryServiceImpl implements FireStationQueryService {
 
     private final DataRepository dataRepository;
+    private final PeopleWithAgeService peopleWithAgeService;
 
     @Override
     public FirestationCoverageDTO getCoverageByStation(String stationNumber) {
@@ -52,47 +53,22 @@ public class FireStationQueryServiceImpl implements FireStationQueryService {
             throw new AddressNotFoundException("No address found for this station");
         }
 
-        // Personnes couvertes par la station
+        List<PersonDTO> allPeopleWithAge = peopleWithAgeService.listAll();
+
+        // 2) Filtrer par adresses couvertes + ignorer ceux sans âge
         List<PersonDTO> persons = new ArrayList<>();
         int adults = 0;
         int children = 0;
 
-        for (Person person : dataContainer.getPersons()) {
-            if (person == null) continue;
-            if (!coveredAddresses.contains(person.getAddress())) continue;
+        for (PersonDTO personDTO : allPeopleWithAge) {
+            if (personDTO == null) continue;
+            if (!coveredAddresses.contains(personDTO.getAddress())) continue;
 
-            //Calculer Age
-            MedicalRecord medicalRecord = findMedicalRecordByName(dataContainer.getMedicalrecords(),
-                    person.getFirstName(), person.getLastName());
-            if (medicalRecord == null) continue;
-
-            //Compter enfant et adultes
-            int age = AgeCalculator.computeAge(medicalRecord.getBirthdate());
-            if (age <= 18) children++;
+            if (personDTO.getAge() <= 18) children++;
             else adults++;
 
-            persons.add(new PersonDTO(
-                    person.getFirstName(),
-                    person.getLastName(),
-                    age,
-                    person.getAddress(),
-                    person.getPhone()
-            ));
+            persons.add(personDTO);
         }
         return new FirestationCoverageDTO(Integer.valueOf(stationNumber), persons, adults, children);
-    }
-
-    //recherche du dossier médical correspondant (prénom + nom)
-    private static MedicalRecord findMedicalRecordByName(List<MedicalRecord> list, String firstName, String lastName) {
-        if (list == null || firstName == null || lastName == null) return null;
-        String first = firstName.trim();
-        String last = lastName.trim();
-        for (MedicalRecord medicalRecord : list) {
-            if (medicalRecord == null) continue;
-            if (first.equals(medicalRecord.getFirstName()) && last.equals(medicalRecord.getLastName())) {
-                return medicalRecord; // premier match
-            }
-        }
-        return null;
     }
 }
