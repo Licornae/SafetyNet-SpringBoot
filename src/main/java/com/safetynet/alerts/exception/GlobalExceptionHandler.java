@@ -27,12 +27,23 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(AddressNotFoundException.class)
-    public ResponseEntity<String> handleAddressNotFound(AddressNotFoundException ex) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+    public ResponseEntity<String> handleAddressNotFound(AddressNotFoundException e) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
     }
 
     @ExceptionHandler(MedicalRecordNotFoundException.class)
     public ResponseEntity<String> handleMedicalRecordNotFound(MedicalRecordNotFoundException e){
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
     }
+
+    @ExceptionHandler(StationNotFoundException.class)
+    public ResponseEntity<String> handleStationNotFound(StationNotFoundException e){
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+    }
+
+    @ExceptionHandler(jakarta.validation.ConstraintViolationException.class)
+    public ResponseEntity<Object> handleConstraintViolation(jakarta.validation.ConstraintViolationException e) {
+        return ResponseEntity.badRequest().body("Invalid request parameters");
+    }
+
 }

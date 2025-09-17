@@ -56,7 +56,6 @@ public class PhoneAlertServiceImplTest {
                 "Un paramètre station null doit lever IllegalArgumentException");
     }
 
-
     private static boolean isUnique(List<String> list) {
         Set<String> set = new HashSet<>(list);
         return set.size() == list.size();
