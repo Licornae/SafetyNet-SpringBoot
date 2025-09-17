@@ -26,7 +26,7 @@ public class FireStationQueryServiceImplTest {
     }
 
     @Test
-    void testGetCoverageByStation_shouldWorkWithRealDataset() {
+    public void testGetCoverageByStation_shouldWorkWithRealDataset() {
 
         String station = "1";
 
@@ -38,19 +38,19 @@ public class FireStationQueryServiceImplTest {
     }
 
     @Test
-    void testGetCoverageByStation_unknownStation_throws() {
+    public void testGetCoverageByStation_unknownStation_throws() {
         assertThrows(AddressNotFoundException.class,
                 () -> service.getCoverageByStation("20"));
     }
 
     @Test
-    void testGetCoverageByStation_blankStation_throws() {
+    public void testGetCoverageByStation_blankStation_throws() {
         assertThrows(IllegalArgumentException.class,
                 () -> service.getCoverageByStation(" "));
     }
 
     @Test
-    void testGetCoverageByStation_nullStation_throws() {
+    public void testGetCoverageByStation_nullStation_throws() {
         assertThrows(IllegalArgumentException.class,
                 () -> service.getCoverageByStation(null));
     }

@@ -27,7 +27,7 @@ public class PhoneAlertServiceImplTest {
     }
 
     @Test
-    void testGetPhonesByFirestation_returnsPhonesList() {
+    public void testGetPhonesByFirestation_returnsPhonesList() {
         String station = "3";
 
         List<String> phones = phoneAlertService.getPhonesByFirestation(station);
@@ -38,7 +38,7 @@ public class PhoneAlertServiceImplTest {
     }
 
     @Test
-    void testGetPhonesByFirestation_unknownStation_throwsStationNotFound() {
+    public void testGetPhonesByFirestation_unknownStation_throwsStationNotFound() {
         StationNotFoundException exception = assertThrows(
                 StationNotFoundException.class,
                 () -> phoneAlertService.getPhonesByFirestation("999")
@@ -47,7 +47,7 @@ public class PhoneAlertServiceImplTest {
     }
 
     @Test
-    void testGetPhonesByFirestation_blank_throws() {
+    public void testGetPhonesByFirestation_blank_throws() {
         assertThrows(IllegalArgumentException.class,
                 () -> phoneAlertService.getPhonesByFirestation(" "),
                 "Un paramètre station vide doit lever IllegalArgumentException");

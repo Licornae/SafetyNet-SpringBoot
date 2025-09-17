@@ -56,14 +56,14 @@ public class ChildAlertServiceImplTest {
     }
 
     @Test
-    void testGetChildrenByAddress_unknownAddress_returnsEmptyList() {
+    public void testGetChildrenByAddress_unknownAddress_returnsEmptyList() {
         List<ChildAlertDTO> children = childAlertService.getChildrenByAddress("Unknown Address");
         assertNotNull(children, "Result should not be null");
         assertTrue(children.isEmpty(), "Unknown address should return an empty list");
     }
 
     @Test
-    void testGetChildrenByAddress_blankAddress_throws() {
+    public void testGetChildrenByAddress_blankAddress_throws() {
         assertThrows(AddressNotFoundException.class,
                 () -> childAlertService.getChildrenByAddress(" "),
                 "Blank address should throw AddressNotFoundException");
