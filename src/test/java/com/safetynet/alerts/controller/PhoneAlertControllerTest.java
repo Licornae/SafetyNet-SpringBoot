@@ -27,7 +27,7 @@ public class PhoneAlertControllerTest {
     PhoneAlertService phoneAlertService;
 
     @Test
-    void phoneAlert_returns_unique_sorted_numbers_for_station() throws Exception {
+    public void phoneAlert_returns_unique_sorted_numbers_for_station() throws Exception {
         String station = "2";
         List<String> phones = List.of("841-874-6512", "841-874-6513", "841-874-7458");
         when(phoneAlertService.getPhonesByFirestation(station)).thenReturn(phones);
@@ -43,7 +43,7 @@ public class PhoneAlertControllerTest {
     }
 
     @Test
-    void unknown_station_returns_404_with_message() throws Exception {
+    public void unknown_station_returns_404_with_message() throws Exception {
         when(phoneAlertService.getPhonesByFirestation("999"))
                 .thenThrow(new StationNotFoundException("Cette station n'existe pas"));
 
@@ -55,7 +55,7 @@ public class PhoneAlertControllerTest {
     }
 
     @Test
-    void blank_station_returns_bad_request() throws Exception {
+    public void blank_station_returns_bad_request() throws Exception {
         mockMvc.perform(get("/phoneAlert")
                         .param("firestation", " ")
                         .accept(MediaType.APPLICATION_JSON))
