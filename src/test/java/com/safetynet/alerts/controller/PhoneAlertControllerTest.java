@@ -41,14 +41,15 @@ public class PhoneAlertControllerTest {
     }
 
     @Test
-    void unknown_station_returns_empty_array() throws Exception {
-        when(phoneAlertService.getPhonesByFirestation("999")).thenReturn(List.of());
+    void unknown_station_returns_404_with_message() throws Exception {
+        when(phoneAlertService.getPhonesByFirestation("999"))
+                .thenThrow(new StationNotFoundException("Cette station n'existe pas"));
 
         mockMvc.perform(get("/phoneAlert")
                         .param("firestation", "999")
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(content().json("[]"));
+                .andExpect(status().isNotFound())
+                .andExpect(content().string("Cette station n'existe pas"));
     }
 
     @Test
