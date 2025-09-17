@@ -3,13 +3,16 @@ package com.safetynet.alerts.controller;
 import com.safetynet.alerts.model.FireStation;
 import com.safetynet.alerts.service.FireStationService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.validation.annotation.Validated;
 
 import java.util.Map;
 
+@Validated
 @RestController
 public class FireStationController {
 
@@ -44,7 +47,7 @@ public class FireStationController {
 
     @PutMapping("/firestation/{address}")
     public ResponseEntity<FireStation> updateStationAddress(
-            @PathVariable String address,
+            @PathVariable @NotBlank String address,
             @Valid @RequestBody FireStation updatedFireStationAddress) {
         FireStation updatedStation = fireStationService.updateStationAddress(address, updatedFireStationAddress);
         return ResponseEntity.ok(updatedStation);

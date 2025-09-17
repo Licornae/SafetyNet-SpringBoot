@@ -43,12 +43,12 @@ public class ChildAlertControllerTest {
                 new ChildAlertDTO("Roger","Boyd",8, familyMembers) );
 
 
-        when(childAlertService.getChildrenByAddress("56 River St"))
+        when(childAlertService.getChildrenByAddress("1509 Culver St"))
             .thenReturn(childAlertDTO);
 
         // Act & Assert
         mockMvc.perform(get("/childAlert")
-                        .param("address","56 River St")
+                        .param("address","1509 Culver St")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].firstName").value("Tenley"))
@@ -64,7 +64,6 @@ public class ChildAlertControllerTest {
                 .andExpect(jsonPath("$[1].firstName").value("Roger"))
                 .andExpect(jsonPath("$[1].familyMembers[0].firstName").value("John"));
  }
-
 
     @Test
     void unknown_address_returns_empty_array() throws Exception {
