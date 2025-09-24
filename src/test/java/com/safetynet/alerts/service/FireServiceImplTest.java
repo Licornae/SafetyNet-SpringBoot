@@ -1,5 +1,6 @@
 package com.safetynet.alerts.service;
 
+import com.safetynet.alerts.dto.FireDTO;
 import com.safetynet.alerts.exception.AddressNotFoundException;
 import com.safetynet.alerts.repository.DataRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -29,7 +30,7 @@ public class FireServiceImplTest {
         FireDTO fireDTO = fireService.getResidentsByAddress("1509 Culver St");
 
         assertNotNull(fireDTO);
-        assertEquals(3, fireDTO.getStation());
+        assertEquals("3", fireDTO.getStation());
         assertNotNull(fireDTO.getResidents());
     }
 
