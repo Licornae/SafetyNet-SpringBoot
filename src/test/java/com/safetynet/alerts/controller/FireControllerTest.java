@@ -1,6 +1,9 @@
 package com.safetynet.alerts.controller;
 
 
+import com.safetynet.alerts.dto.FireDTO;
+import com.safetynet.alerts.dto.FirePersonDTO;
+import com.safetynet.alerts.service.FireService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
@@ -29,14 +32,14 @@ public class FireControllerTest {
     FireService fireService;
 
     @Test
-    public void testGetResidentsInfosByAddress_ReturnsListOfResidentsWithInfosAndStation(){
+    public void testGetResidentsInfosByAddress_ReturnsListOfResidentsWithInfosAndStation()  throws Exception {
 
         List<FirePersonDTO> residents = List.of(
                 new FirePersonDTO("John","Boyd","841-874-6512",41, List.of("aznol:350mg", "hydrapermazol:100mg"), List.of("nillacilan")),
                 new FirePersonDTO("Jacob", "Boyd", "841-874-6513",36,List.of("pharmacol:5000mg", "terazine:10mg"), List.of())
         );
 
-        FireDTO fireDTO = new FireDTO(3, residents);
+        FireDTO fireDTO = new FireDTO("3", residents);
 
         when(fireService.getResidentsByAddress("1509 Culver St")).thenReturn(fireDTO);
 
@@ -44,13 +47,14 @@ public class FireControllerTest {
                         .param("address", "1509 Culver St")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.station").value(3))
+                .andExpect(jsonPath("$.station").value("3"))
                 .andExpect(jsonPath("$.residents[0].firstName").value("John"))
-                .andExpect(jsonPath("$.residents[0].age").value(36))
+                .andExpect(jsonPath("$.residents[0].age").value(41))
                 .andExpect(jsonPath("$.residents[1].firstName").value("Jacob"))
-                .andExpect(jsonPath("$.residents[0].medications").value(List.of("aznol:350mg", "hydrapermazol:100mg")))
-                .andExpect(jsonPath("$.residents[0].allergies").value(List.of("nillacilan")))
-                .andExpect(jsonPath("$.residents[0].allergies").value(List.of()));
+                .andExpect(jsonPath("$.residents[0].medications[0]").value("aznol:350mg"))
+                .andExpect(jsonPath("$.residents[0].medications[1]").value("hydrapermazol:100mg"))
+                .andExpect(jsonPath("$.residents[0].allergies[0]").value("nillacilan"))
+                .andExpect(jsonPath("$.residents[1].allergies").isEmpty());
     }
     @Test
     public void blank_address_returns400() throws Exception {
