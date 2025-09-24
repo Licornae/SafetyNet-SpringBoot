@@ -1,6 +1,7 @@
 package com.safetynet.alerts.service;
 
 
+import com.safetynet.alerts.dto.FloodHouseholdDTO;
 import com.safetynet.alerts.exception.AddressNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,6 +18,7 @@ public class FloodServiceImplTest {
 
     @Autowired
     DataRepository dataRepository;
+
     @Autowired
     FloodService floodService;
 
