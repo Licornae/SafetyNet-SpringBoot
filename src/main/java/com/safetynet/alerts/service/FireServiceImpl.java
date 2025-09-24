@@ -1,7 +1,7 @@
 package com.safetynet.alerts.service;
 
 import com.safetynet.alerts.dto.FireDTO;
-import com.safetynet.alerts.dto.FirePersonDTO;
+import com.safetynet.alerts.dto.PersonMedicalInfoDTO;
 import com.safetynet.alerts.exception.AddressNotFoundException;
 import com.safetynet.alerts.exception.DataNotLoadedException;
 import com.safetynet.alerts.model.DataContainer;
@@ -54,13 +54,13 @@ public class FireServiceImpl implements FireService {
             throw new AddressNotFoundException("No residents at address " + address);
         }
 
-        List<FirePersonDTO> residents = new ArrayList<>();
+        List<PersonMedicalInfoDTO> residents = new ArrayList<>();
         for (Person person : personsAtAddress) {
             Integer age = medicalInfoService.getAgeFor(person);
             List<String> medications = medicalInfoService.getMedicationsFor(person);
             List<String> allergies = medicalInfoService.getAllergiesFor(person);
 
-            residents.add(new FirePersonDTO(
+            residents.add(new PersonMedicalInfoDTO(
                     person.getFirstName(),
                     person.getLastName(),
                     person.getPhone(),

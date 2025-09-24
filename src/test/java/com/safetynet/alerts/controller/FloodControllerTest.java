@@ -1,12 +1,14 @@
 package com.safetynet.alerts.controller;
 
+import com.safetynet.alerts.dto.FloodHouseholdDTO;
+import com.safetynet.alerts.service.FloodService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
-import com.safetynet.alerts.dto.FirePersonDTO;
+import com.safetynet.alerts.dto.PersonMedicalInfoDTO;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 
@@ -25,11 +27,11 @@ public class FloodControllerTest {
 
     @Test
     void getHouseholdsByStations_ok() throws Exception {
-        List<FirePersonDTO> residentsAt1509CulverSt = List.of(
-                new FirePersonDTO("John","Boyd","841-874-6512",41,
+        List<PersonMedicalInfoDTO> residentsAt1509CulverSt = List.of(
+                new PersonMedicalInfoDTO("John","Boyd","841-874-6512",41,
                         List.of("aznol:350mg","hydrapermazol:100mg"),
                         List.of("nillacilan")),
-                new FirePersonDTO("Jacob","Boyd","841-874-6513",36,
+                new PersonMedicalInfoDTO("Jacob","Boyd","841-874-6513",36,
                         List.of("pharmacol:5000mg","terazine:10mg"),
                         List.of())
         );

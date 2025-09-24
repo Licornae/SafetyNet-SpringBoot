@@ -8,7 +8,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class FirePersonDTO {
+public class PersonMedicalInfoDTO {
     private String firstName;
     private String lastName;
     private String phone;
