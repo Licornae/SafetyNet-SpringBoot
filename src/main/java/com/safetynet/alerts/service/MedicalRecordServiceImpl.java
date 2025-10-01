@@ -39,7 +39,7 @@ public class MedicalRecordServiceImpl implements MedicalRecordService {
             if(medicalRecord.getFirstName().equals(firstName) && medicalRecord.getLastName().equals(lastName)){
                 medicalRecord.setBirthdate(updatedMedicalRecord.getBirthdate());
                 medicalRecord.setMedications(updatedMedicalRecord.getMedications());
-                medicalRecord.setAllergies(updatedMedicalRecord.getMedications());
+                medicalRecord.setAllergies(updatedMedicalRecord.getAllergies());
                 return medicalRecord;
             }
         }

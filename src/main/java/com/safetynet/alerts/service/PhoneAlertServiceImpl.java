@@ -39,7 +39,7 @@ public class PhoneAlertServiceImpl implements PhoneAlertService {
 
         if (!stationExists) {
             log.info("Station {} not found", stationNumber);
-            throw new StationNotFoundException("Cette station n'existe pas");
+            throw new StationNotFoundException("This station doesn't exist");
         }
 
         //Adresses couvertes par la station demandée

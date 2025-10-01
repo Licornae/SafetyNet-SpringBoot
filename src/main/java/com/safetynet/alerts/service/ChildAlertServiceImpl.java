@@ -16,7 +16,7 @@ import java.util.Objects;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class ChildAlerteServiceImpl implements ChildAlertService {
+public class ChildAlertServiceImpl implements ChildAlertService {
 
     private final PeopleWithAgeService peopleWithAgeService;
 
