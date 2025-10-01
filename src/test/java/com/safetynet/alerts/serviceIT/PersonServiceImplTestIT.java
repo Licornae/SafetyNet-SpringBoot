@@ -1,4 +1,4 @@
-package com.safetynet.alerts.service;
+package com.safetynet.alerts.serviceIT;
 
 import com.safetynet.alerts.model.Person;
 import com.safetynet.alerts.repository.DataRepository;
@@ -10,7 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-public class PersonServiceImplTest {
+public class PersonServiceImplTestIT {
 
     @Autowired
     private PersonService personService;

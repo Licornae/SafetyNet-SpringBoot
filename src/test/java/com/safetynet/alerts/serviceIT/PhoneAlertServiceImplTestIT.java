@@ -1,4 +1,4 @@
-package com.safetynet.alerts.service;
+package com.safetynet.alerts.serviceIT;
 
 import com.safetynet.alerts.exception.StationNotFoundException;
 import com.safetynet.alerts.repository.DataRepository;
@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Set;
 
 @SpringBootTest
-public class PhoneAlertServiceImplTest {
+public class PhoneAlertServiceImplTestIT {
 
     @Autowired
     DataRepository dataRepository;

@@ -1,4 +1,4 @@
-package com.safetynet.alerts.service;
+package com.safetynet.alerts.serviceIT;
 
 import com.safetynet.alerts.dto.FireDTO;
 import com.safetynet.alerts.exception.AddressNotFoundException;
@@ -11,7 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-public class FireServiceImplTest {
+public class FireServiceImplTestIT {
 
     @Autowired
     DataRepository dataRepository;

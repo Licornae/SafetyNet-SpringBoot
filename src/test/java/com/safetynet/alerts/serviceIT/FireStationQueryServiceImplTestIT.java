@@ -1,4 +1,4 @@
-package com.safetynet.alerts.service;
+package com.safetynet.alerts.serviceIT;
 
 import com.safetynet.alerts.dto.FirestationCoverageDTO;
 import com.safetynet.alerts.exception.AddressNotFoundException;
@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 
 @SpringBootTest
-public class FireStationQueryServiceImplTest {
+public class FireStationQueryServiceImplTestIT {
 
     @Autowired
     FireStationQueryService service;
@@ -21,7 +21,7 @@ public class FireStationQueryServiceImplTest {
     DataRepository dataRepository;
 
     @BeforeEach
-    void reset() {
+    public void reset() {
         dataRepository.reloadData();
     }
 

@@ -1,4 +1,4 @@
-package com.safetynet.alerts.service;
+package com.safetynet.alerts.serviceIT;
 
 import com.safetynet.alerts.dto.ChildAlertDTO;
 import com.safetynet.alerts.exception.AddressNotFoundException;
@@ -13,7 +13,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-public class ChildAlertServiceImplTest {
+public class ChildAlertServiceImplTestIT {
 
     @Autowired
     DataRepository dataRepository;

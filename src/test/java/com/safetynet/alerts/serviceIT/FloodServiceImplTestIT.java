@@ -1,4 +1,4 @@
-package com.safetynet.alerts.service;
+package com.safetynet.alerts.serviceIT;
 
 
 import com.safetynet.alerts.dto.FloodHouseholdDTO;
@@ -14,7 +14,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-public class FloodServiceImplTest {
+public class FloodServiceImplTestIT {
 
     @Autowired
     DataRepository dataRepository;
@@ -23,10 +23,10 @@ public class FloodServiceImplTest {
     FloodService floodService;
 
     @BeforeEach
-    void reload() { dataRepository.reloadData(); }
+    public void reload() { dataRepository.reloadData(); }
 
     @Test
-    void returnsHouseholdsForStations() {
+    public void returnsHouseholdsForStations() {
         List<FloodHouseholdDTO> households = floodService.getHouseholdsByStations(List.of("1","3"));
         assertNotNull(households);
         assertFalse(households.isEmpty());
@@ -34,13 +34,13 @@ public class FloodServiceImplTest {
     }
 
     @Test
-    void unknownStations_throw404() {
+    public void unknownStations_throw404() {
         assertThrows(AddressNotFoundException.class,
                 () -> floodService.getHouseholdsByStations(List.of("999")));
     }
 
     @Test
-    void blankList_throw400() {
+    public void blankList_throw400() {
         assertThrows(IllegalArgumentException.class,
                 () -> floodService.getHouseholdsByStations(List.of()));
     }

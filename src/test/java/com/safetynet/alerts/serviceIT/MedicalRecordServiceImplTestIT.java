@@ -1,4 +1,4 @@
-package com.safetynet.alerts.service;
+package com.safetynet.alerts.serviceIT;
 
 import com.safetynet.alerts.model.MedicalRecord;
 import com.safetynet.alerts.repository.DataRepository;
@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.util.List;
 
 @SpringBootTest
-public class MedicalRecordServiceImplTest {
+public class MedicalRecordServiceImplTestIT {
 
     @Autowired
     private MedicalRecordService medicalRecordService;
