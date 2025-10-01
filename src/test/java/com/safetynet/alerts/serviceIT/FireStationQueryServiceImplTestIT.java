@@ -3,6 +3,7 @@ package com.safetynet.alerts.serviceIT;
 import com.safetynet.alerts.dto.FirestationCoverageDTO;
 import com.safetynet.alerts.exception.AddressNotFoundException;
 import com.safetynet.alerts.repository.DataRepository;
+import com.safetynet.alerts.service.FireStationQueryService;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.beans.factory.annotation.Autowired;

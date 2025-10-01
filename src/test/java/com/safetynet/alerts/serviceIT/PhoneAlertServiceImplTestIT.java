@@ -2,6 +2,7 @@ package com.safetynet.alerts.serviceIT;
 
 import com.safetynet.alerts.exception.StationNotFoundException;
 import com.safetynet.alerts.repository.DataRepository;
+import com.safetynet.alerts.service.PhoneAlertService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +23,7 @@ public class PhoneAlertServiceImplTestIT {
     PhoneAlertService phoneAlertService;
 
     @BeforeEach
-    void resetData() {
+    public void resetData() {
         dataRepository.reloadData();
     }
 
@@ -31,10 +32,9 @@ public class PhoneAlertServiceImplTestIT {
         String station = "3";
 
         List<String> phones = phoneAlertService.getPhonesByFirestation(station);
-
-        assertNotNull(phones, "La liste ne doit pas être nulle");
-        assertFalse(phones.isEmpty(), "La liste ne doit pas être vide pour une station existante");
-        assertTrue(isUnique(phones), "Chaque numéro est unique");
+        assertNotNull(phones, "The list doesn't have to be null");
+        assertFalse(phones.isEmpty(), "The list must not be empty for an existing station");
+        assertTrue(isUnique(phones), "Each number is unique");
     }
 
     @Test
@@ -43,17 +43,17 @@ public class PhoneAlertServiceImplTestIT {
                 StationNotFoundException.class,
                 () -> phoneAlertService.getPhonesByFirestation("999")
         );
-        assertEquals("Cette station n'existe pas", exception.getMessage());
+        assertEquals("This station doesn't exist", exception.getMessage());
     }
 
     @Test
     public void testGetPhonesByFirestation_blank_throws() {
         assertThrows(IllegalArgumentException.class,
                 () -> phoneAlertService.getPhonesByFirestation(" "),
-                "Un paramètre station vide doit lever IllegalArgumentException");
+                "An empty station parameter should raise  IllegalArgumentException");
         assertThrows(IllegalArgumentException.class,
                 () -> phoneAlertService.getPhonesByFirestation(null),
-                "Un paramètre station null doit lever IllegalArgumentException");
+                "A null station parameter should raise  IllegalArgumentException");
     }
 
     private static boolean isUnique(List<String> list) {

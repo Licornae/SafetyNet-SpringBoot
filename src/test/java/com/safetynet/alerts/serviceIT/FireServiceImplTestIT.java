@@ -3,6 +3,7 @@ package com.safetynet.alerts.serviceIT;
 import com.safetynet.alerts.dto.FireDTO;
 import com.safetynet.alerts.exception.AddressNotFoundException;
 import com.safetynet.alerts.repository.DataRepository;
+import com.safetynet.alerts.service.FireService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +21,7 @@ public class FireServiceImplTestIT {
     FireService fireService;
 
     @BeforeEach
-    void reload() {
+    public void reload() {
         dataRepository.reloadData();
     }
 

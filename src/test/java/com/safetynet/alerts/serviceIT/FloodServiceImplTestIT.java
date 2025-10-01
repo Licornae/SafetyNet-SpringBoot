@@ -3,6 +3,7 @@ package com.safetynet.alerts.serviceIT;
 
 import com.safetynet.alerts.dto.FloodHouseholdDTO;
 import com.safetynet.alerts.exception.AddressNotFoundException;
+import com.safetynet.alerts.service.FloodService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -2,6 +2,7 @@ package com.safetynet.alerts.serviceIT;
 
 import com.safetynet.alerts.model.MedicalRecord;
 import com.safetynet.alerts.repository.DataRepository;
+import com.safetynet.alerts.service.MedicalRecordService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +22,7 @@ public class MedicalRecordServiceImplTestIT {
     DataRepository dataRepository;
 
     @BeforeEach
-    void resetData() {
+    public void resetData() {
         dataRepository.reloadData();
     }
 

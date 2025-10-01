@@ -3,6 +3,7 @@ package com.safetynet.alerts.serviceIT;
 import com.safetynet.alerts.dto.ChildAlertDTO;
 import com.safetynet.alerts.exception.AddressNotFoundException;
 import com.safetynet.alerts.repository.DataRepository;
+import com.safetynet.alerts.service.ChildAlertService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +20,7 @@ public class ChildAlertServiceImplTestIT {
     DataRepository dataRepository;
 
     @BeforeEach
-    void resetData() {
+    public void resetData() {
         dataRepository.reloadData();
     }
 
