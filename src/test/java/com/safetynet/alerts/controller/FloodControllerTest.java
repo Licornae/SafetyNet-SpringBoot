@@ -36,7 +36,7 @@ public class FloodControllerTest {
                         List.of())
         );
         List<FloodHouseholdDTO> floodHouseholdDTO = List.of(
-                new FloodHouseholdDTO("1509 Culver St", residentsAt1509CulverSt)
+                new FloodHouseholdDTO("3","1509 Culver St", residentsAt1509CulverSt)
         );
 
         when(floodService.getHouseholdsByStations(List.of("1","3"))).thenReturn(floodHouseholdDTO);
