@@ -2,6 +2,7 @@ package com.safetynet.alerts.serviceIT;
 
 import com.safetynet.alerts.dto.PersonInfoDTO;
 import com.safetynet.alerts.repository.DataRepository;
+import com.safetynet.alerts.service.PersonInfoServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class PersonInfoServiceImplTestIT {
 
     @Autowired
-    private PersonInfoServiceImpl service;
+    private PersonInfoServiceImpl personInfoService;
 
     @Autowired
     DataRepository dataRepository;

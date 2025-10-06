@@ -16,6 +16,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static java.util.List.of;
 import static org.junit.jupiter.api.Assertions.*;
@@ -28,21 +31,15 @@ public class PersonInfoServiceImplUnitTest {
     DataRepository dataRepository;
 
     @Mock
-    PeopleWithAgeService peopleWithAgeService;
+    MedicalInfoService medicalInfoService;
 
     @InjectMocks
     PersonInfoServiceImpl service;
 
     private DataContainer container;
 
-    private static PersonInfoDTO find(List<PersonInfoDTO> list, String firstName) {
-        return list.stream().filter(personInfoDTO -> firstName.equals(personInfoDTO.getFirstName()))
-                .findFirst().orElseThrow(() -> new AssertionError("Not found: " + firstName));
-    }
-
     @BeforeEach
     public void setUp() {
-
         List<Person> persons = new ArrayList<>(of(
                 new Person("John",   "Boyd",   "1509 Culver St", "Culver", "97451", "841-874-6512", "john.boyd@email.com"),
                 new Person("Jacob",  "Boyd",   "1509 Culver St", "Culver", "97451", "841-874-6513", "jacob.boyd@email.com"),
@@ -64,48 +61,60 @@ public class PersonInfoServiceImplUnitTest {
         when(dataRepository.getDataContainer()).thenReturn(container);
     }
 
+
     @Test
     public void getPersonInfo_LastNameBoyds_ReturnsAllBoyds() {
+        Person john   = container.getPersons().get(0);
+        Person jacob  = container.getPersons().get(1);
+        Person tenley = container.getPersons().get(2);
 
-        when(peopleWithAgeService.listAll()).thenReturn(of(
-                new PersonDTO("John",   "Boyd", 40, "1509 Culver St", "841-874-6512"),
-                new PersonDTO("Jacob",  "Boyd", 36, "1509 Culver St", "841-874-6513"),
-                new PersonDTO("Tenley", "Boyd", 12, "1509 Culver St", "841-874-6512"),
-                new PersonDTO("Peter",  "Duncan", 20, "644 Gershwin Cir", "841-874-7458")
-        ));
+        when(medicalInfoService.getAgeFor(john)).thenReturn(40);
+        when(medicalInfoService.getAgeFor(jacob)).thenReturn(36);
+        when(medicalInfoService.getAgeFor(tenley)).thenReturn(12);
+
+        when(medicalInfoService.getMedicationsFor(john)).thenReturn(of("aznol:200mg"));
+        when(medicalInfoService.getAllergiesFor(john)).thenReturn(of("nillacilan"));
+
+        when(medicalInfoService.getMedicationsFor(jacob)).thenReturn(of("pharmacol:5000mg"));
+        when(medicalInfoService.getAllergiesFor(jacob)).thenReturn(of());
+
+        when(medicalInfoService.getMedicationsFor(tenley)).thenReturn(of("ibupurin:200mg"));
+        when(medicalInfoService.getAllergiesFor(tenley)).thenReturn(of("peanut"));
 
         List<PersonInfoDTO> result = service.getPersonInfoByLastName("Boyd");
 
         assertNotNull(result);
         assertEquals(3, result.size(), "Three Boyds expected");
 
-        PersonInfoDTO john = find(result, "John");
-        assertEquals("Boyd", john.getLastName());
-        assertEquals(40, john.getAge());
-        assertEquals("1509 Culver St", john.getAddress());
-        assertEquals("john.boyd@email.com", john.getEmail());
-        assertTrue(john.getMedications().contains("aznol:200mg"));
-        assertTrue(john.getAllergies().contains("nillacilan"));
+        Map<String, PersonInfoDTO> byFirstName = result.stream()
+                .collect(Collectors.toMap(PersonInfoDTO::getFirstName, Function.identity()));
 
-        PersonInfoDTO jacob = find(result, "Jacob");
-        assertEquals(36, jacob.getAge());
-        assertEquals("jacob.boyd@email.com", jacob.getEmail());
-        assertTrue(jacob.getMedications().contains("pharmacol:5000mg"));
-        assertTrue(jacob.getAllergies().isEmpty());
+        PersonInfoDTO johnDTO = byFirstName.get("John");
+        assertNotNull(johnDTO, "John must be present");
+        assertEquals("Boyd", johnDTO.getLastName());
+        assertEquals(40, johnDTO.getAge());
+        assertEquals("1509 Culver St", johnDTO.getAddress());
+        assertEquals("john.boyd@email.com", johnDTO.getEmail());
+        assertTrue(johnDTO.getMedications().contains("aznol:200mg"));
+        assertTrue(johnDTO.getAllergies().contains("nillacilan"));
 
-        PersonInfoDTO tenley = find(result, "Tenley");
-        assertEquals(12, tenley.getAge());
-        assertEquals("tenley.boyd@email.com", tenley.getEmail());
-        assertTrue(tenley.getMedications().contains("ibupurin:200mg"));
-        assertTrue(tenley.getAllergies().contains("peanut"));
+        PersonInfoDTO jacobDTO = byFirstName.get("Jacob");
+        assertNotNull(jacobDTO, "Jacob must be present");
+        assertEquals(36, jacobDTO.getAge());
+        assertEquals("jacob.boyd@email.com", jacobDTO.getEmail());
+        assertTrue(jacobDTO.getMedications().contains("pharmacol:5000mg"));
+        assertTrue(jacobDTO.getAllergies().isEmpty());
+
+        PersonInfoDTO tenleyDTO = byFirstName.get("Tenley");
+        assertNotNull(tenleyDTO, "Tenley must be present");
+        assertEquals(12, tenleyDTO.getAge());
+        assertEquals("tenley.boyd@email.com", tenleyDTO.getEmail());
+        assertTrue(tenleyDTO.getMedications().contains("ibupurin:200mg"));
+        assertTrue(tenleyDTO.getAllergies().contains("peanut"));
     }
 
     @Test
     public void getPersonInfo_UnknownLastName_ReturnsEmpty() {
-        when(peopleWithAgeService.listAll()).thenReturn(of(
-                new PersonDTO("Peter", "Duncan", 20, "644 Gershwin Cir", "841-874-7458")
-        ));
-
         List<PersonInfoDTO> result = service.getPersonInfoByLastName("Unknown");
         assertNotNull(result);
         assertTrue(result.isEmpty());
