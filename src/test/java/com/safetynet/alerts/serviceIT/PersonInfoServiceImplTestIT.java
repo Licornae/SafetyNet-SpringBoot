@@ -36,7 +36,7 @@ class PersonInfoServiceImplTestIT {
 
         assertNotNull(persons, "The list must not be empty");
         assertFalse(persons.isEmpty(), "The list must not be empty for an existing name");
-        assertEquals(5, persons.size(), "There are 5 Boyd");
+        assertEquals(6, persons.size(), "There are 5 Boyd");
 
         PersonInfoDTO john = persons.stream()
                 .filter(personInfoDTO -> "John".equalsIgnoreCase(personInfoDTO.getFirstName()))

@@ -1,6 +1,7 @@
 package com.safetynet.alerts.controller;
 
 import com.safetynet.alerts.dto.PersonInfoDTO;
+import com.safetynet.alerts.service.PersonInfoService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -36,7 +37,7 @@ public class PersonInfoControllerTest {
 
         when(personInfoService.getPersonInfoByLastName("Boyd")).thenReturn(boyds);
 
-        mockMvc.perform(get("/personInfo").param("lastName", "Boyd"))
+        mockMvc.perform(get("/personInfolastName").param("lastName", "Boyd"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$", hasSize(3)))
@@ -51,7 +52,7 @@ public class PersonInfoControllerTest {
     public void getPersonInfo_UnknownLastName_Returns200EmptyList() throws Exception {
         when(personInfoService.getPersonInfoByLastName("Unknown")).thenReturn(List.of());
 
-        mockMvc.perform(get("/personInfo").param("lastName", "Unknown"))
+        mockMvc.perform(get("/personInfolastName").param("lastName", "Unknown"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$", hasSize(0)));
