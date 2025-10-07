@@ -53,7 +53,10 @@ public class CommunityEmailServiceImplUnitTest {
         assertNotNull(emails);
 
         assertEquals(3, emails.size(),"emails are unique");
-        assertTrue(emails.containsAll(of("john@email.com", "jacob@email.com", "jane@corp.com")));
+
+        List<String> values = emails.stream().map(EmailDTO::getEmail).toList();
+        assertTrue(values.containsAll(of("john@email.com", "jacob@email.com", "jane@corp.com")));
+
     }
 
     @Test

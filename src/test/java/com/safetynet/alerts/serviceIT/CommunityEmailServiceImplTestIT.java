@@ -33,9 +33,10 @@ public class CommunityEmailServiceImplTestIT {
         assertNotNull(emails, "Result should not be null");
         assertFalse(emails.isEmpty(), "Culver should return at least one email");
 
-        assertTrue(emails.stream().anyMatch(email -> email.equals("jaboyd@email.com")
-                        || email.equals("john@email.com")
-                        || email.equals("jacob@email.com")),
+
+        assertTrue(emails.stream().anyMatch(email -> email.getEmail().equals("jaboyd@email.com")
+                        || email.getEmail().equals("john@email.com")
+                        || email.getEmail().equals("jacob@email.com")),
                 "At least one known Culver email should be present");
     }
 
