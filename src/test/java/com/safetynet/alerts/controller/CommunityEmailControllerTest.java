@@ -1,5 +1,8 @@
 package com.safetynet.alerts.controller;
 
+import com.safetynet.alerts.dto.EmailDTO;
+import com.safetynet.alerts.exception.CityNotFoundException;
+import com.safetynet.alerts.service.CommunityEmailService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -25,7 +28,7 @@ public class CommunityEmailControllerTest {
 
     @Test
     public void getCommunityEmails_ValidCity_Returns200() throws Exception {
-        List<String> culverEmails = List.of("jaboyd@email.com", "tcoop@ymail.com", "lily@email.com");
+        List<EmailDTO> culverEmails = List.of(new EmailDTO("jaboyd@email.com"), new EmailDTO("tcoop@ymail.com"), new EmailDTO("lily@email.com"));
 
         when(communityEmailService.getEmailsByCity("Culver")).thenReturn(culverEmails);
 
@@ -33,7 +36,7 @@ public class CommunityEmailControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$", hasSize(3)))
-                .andExpect(jsonPath("$[*]", hasItem("tcoop@ymail.com")));
+                .andExpect(jsonPath("$[0].email").value("jaboyd@email.com"));
     }
 
     @Test
