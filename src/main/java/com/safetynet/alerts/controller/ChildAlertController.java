@@ -13,6 +13,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+/**
+ * REST controller exposing the /childAlert endpoint.
+ * Returns children (<= 18 years) living at a given address and their family members.
+ */
 @Slf4j
 @Validated
 @RestController
@@ -21,14 +25,25 @@ public class ChildAlertController {
 
     private final ChildAlertService childAlertService;
 
+    /**
+     * Get children and family members for the provided address.
+     *
+     * @param address (must not be blank)
+     * @return 200 OK with:
+     *         - an empty string "" when the address is known but no children live there
+     *         - a JSON array of ChildAlertDTO otherwise
+     */
     @GetMapping("/childAlert")
     public ResponseEntity<?> getChildAlertByAddress(@RequestParam("address") @NotBlank String address){
+        log.info("GET /childAlert called with address='{}'", address);
 
         List<ChildAlertDTO> result = childAlertService.getChildrenByAddress(address);
 
         if (result.isEmpty()) {
-            return ResponseEntity.ok(List.of());
+            log.debug("No children found at address='{}' -> returning empty body", address);
+            return ResponseEntity.ok("");
         }
+        log.info("Found {} child(ren) at address='{}'", result.size(), address);
         return ResponseEntity.ok(result);
     }
 }

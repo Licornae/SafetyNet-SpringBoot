@@ -6,6 +6,9 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
+/**
+ * Presentation model for a child living at an address and their family members.
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

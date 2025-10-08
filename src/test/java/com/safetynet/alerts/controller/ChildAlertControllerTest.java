@@ -2,6 +2,7 @@ package com.safetynet.alerts.controller;
 
 import com.safetynet.alerts.dto.ChildAlertDTO;
 import com.safetynet.alerts.dto.FamilyMembersDTO;
+import com.safetynet.alerts.exception.AddressNotFoundException;
 import com.safetynet.alerts.service.ChildAlertService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,12 +67,24 @@ public class ChildAlertControllerTest {
  }
 
     @Test
-    void unknown_address_returns_empty_array() throws Exception {
-        when(childAlertService.getChildrenByAddress("Unknown")).thenReturn(List.of());
+    void existing_address_with_only_adults_returns_empty_array() throws Exception {
+        when(childAlertService.getChildrenByAddress("644 Gershwin Cir"))
+                .thenReturn(List.of());
 
-        mockMvc.perform(get("/childAlert")
-                        .param("address","Unknown"))
+        mockMvc.perform(get("/childAlert").param("address","644 Gershwin Cir"))
                 .andExpect(status().isOk())
-                .andExpect(content().json("[]"));
+                .andExpect(content().string(""));
     }
+
+    @Test
+    void unknown_Address_Returns404() throws Exception {
+        when(childAlertService.getChildrenByAddress("Unknown"))
+                .thenThrow(new AddressNotFoundException("Address not found"));
+
+        mockMvc.perform(get("/childAlert").param("address","Unknown"))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.message").value("Address not found"))
+                .andExpect(jsonPath("$.path").value("/childAlert"));
+    }
+
 }

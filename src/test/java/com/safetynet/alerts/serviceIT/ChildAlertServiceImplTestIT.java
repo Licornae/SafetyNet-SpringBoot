@@ -57,17 +57,24 @@ public class ChildAlertServiceImplTestIT {
     }
 
     @Test
-    public void testGetChildrenByAddress_unknownAddress_returnsEmptyList() {
-        List<ChildAlertDTO> children = childAlertService.getChildrenByAddress("Unknown Address");
-        assertNotNull(children, "Result should not be null");
-        assertTrue(children.isEmpty(), "Unknown address should return an empty list");
+    public void testGetChildrenByAddress_UnknownAddress_throwsAddressNotFound() {
+        assertThrows(AddressNotFoundException.class,
+                () -> childAlertService.getChildrenByAddress("Unknown Address"),
+                "Unknown address should throw AddressNotFoundException");
     }
 
     @Test
-    public void testGetChildrenByAddress_blankAddress_throws() {
-        assertThrows(AddressNotFoundException.class,
+    public void testGetChildrenByAddress_BlankAddress_ThrowsIllegalArgument() {
+        assertThrows(IllegalArgumentException.class,
                 () -> childAlertService.getChildrenByAddress(" "),
-                "Blank address should throw AddressNotFoundException");
+                "Blank address should throw IllegalArgumentException");
+    }
+
+    @Test
+    public void testGetChildrenByAddress_ExistingAddress_OnlyAdults_ReturnsEmptyList() {
+        List<ChildAlertDTO> children = childAlertService.getChildrenByAddress("644 Gershwin Cir");
+        assertNotNull(children, "Result should not be null");
+        assertTrue(children.isEmpty(), "Existing address with adults only should return an empty list");
     }
 
 }
