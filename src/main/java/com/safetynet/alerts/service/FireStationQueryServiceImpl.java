@@ -4,6 +4,7 @@ import com.safetynet.alerts.dto.FirestationCoverageDTO;
 import com.safetynet.alerts.dto.PersonDTO;
 import com.safetynet.alerts.exception.AddressNotFoundException;
 import com.safetynet.alerts.exception.DataNotLoadedException;
+import com.safetynet.alerts.exception.StationNotFoundException;
 import com.safetynet.alerts.model.DataContainer;
 import com.safetynet.alerts.model.FireStation;
 import com.safetynet.alerts.repository.DataRepository;
@@ -16,7 +17,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-
+/**
+ * Default implementation of FireStationQueryService.
+ */
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -25,10 +28,15 @@ public class FireStationQueryServiceImpl implements FireStationQueryService {
     private final DataRepository dataRepository;
     private final PeopleWithAgeService peopleWithAgeService;
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public FirestationCoverageDTO getCoverageByStation(String stationNumber) {
+        log.info("getCoverageByStation called with stationNumber='{}'", stationNumber);
 
         if (stationNumber == null || stationNumber.isBlank()) {
+            log.warn("getCoverageByStation: blank stationNumber");
             throw new IllegalArgumentException("stationNumber is required");
         }
 
@@ -39,20 +47,29 @@ public class FireStationQueryServiceImpl implements FireStationQueryService {
             throw new DataNotLoadedException("DataContainer not loaded");
         }
 
-        //Adresses couvertes par la station demandée
+        boolean stationExists = dataContainer.getFirestations().stream()
+                .filter(fireStation -> fireStation != null && fireStation.getStation() != null)
+                .anyMatch(fireStation -> stationNumber.equals(fireStation.getStation()));
+
+        if (!stationExists) {
+            log.warn("Station '{}' doesn't exist", stationNumber);
+            throw new StationNotFoundException("Station " + stationNumber + " not found");
+        }
+
+        //Addresses covered by the requested station
         Set<String> coveredAddresses = dataContainer.getFirestations().stream()
                 .filter(firestation -> stationNumber.equals(firestation.getStation()))
                 .map(FireStation::getAddress)
                 .collect(Collectors.toSet());
 
         if (coveredAddresses.isEmpty()) {
-            log.info("No firestation mapping found for station {}", stationNumber);
-            throw new AddressNotFoundException("No address found for this station");
+            log.warn("No firestation mapping found for station {}", stationNumber);
+            throw new AddressNotFoundException("No address found for station " + stationNumber);
         }
 
         List<PersonDTO> allPeopleWithAge = peopleWithAgeService.listAll();
 
-        // 2) Filtrer par adresses couvertes + ignorer ceux sans âge
+        //Filter persons by covered addresses and count adults/children
         List<PersonDTO> persons = new ArrayList<>();
         int adults = 0;
         int children = 0;
@@ -66,6 +83,9 @@ public class FireStationQueryServiceImpl implements FireStationQueryService {
 
             persons.add(personDTO);
         }
-        return new FirestationCoverageDTO(Integer.valueOf(stationNumber), persons, adults, children);
+
+        log.info("getCoverageByStation('{}'): persons={}, adults={}, children={}", stationNumber, persons.size(), adults, children);
+
+        return new FirestationCoverageDTO(Integer.parseInt(stationNumber), persons, adults, children);
     }
 }

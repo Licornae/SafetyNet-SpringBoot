@@ -1,7 +1,7 @@
 package com.safetynet.alerts.serviceIT;
 
 import com.safetynet.alerts.dto.FirestationCoverageDTO;
-import com.safetynet.alerts.exception.AddressNotFoundException;
+import com.safetynet.alerts.exception.StationNotFoundException;
 import com.safetynet.alerts.repository.DataRepository;
 import com.safetynet.alerts.service.FireStationQueryService;
 import org.junit.jupiter.api.Test;
@@ -40,7 +40,7 @@ public class FireStationQueryServiceImplTestIT {
 
     @Test
     public void testGetCoverageByStation_unknownStation_throws() {
-        assertThrows(AddressNotFoundException.class,
+        assertThrows(StationNotFoundException.class,
                 () -> service.getCoverageByStation("20"));
     }
 

@@ -5,6 +5,11 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * Mapping between an address and a fire station number.
+ * Each instance represents one mapping entry from the dataset.
+ * NotBlank constraints enforce minimal data integrity.
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

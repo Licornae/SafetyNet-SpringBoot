@@ -2,7 +2,7 @@ package com.safetynet.alerts.service;
 
 import com.safetynet.alerts.dto.FirestationCoverageDTO;
 import com.safetynet.alerts.dto.PersonDTO;
-import com.safetynet.alerts.exception.AddressNotFoundException;
+import com.safetynet.alerts.exception.StationNotFoundException;
 import com.safetynet.alerts.model.DataContainer;
 import com.safetynet.alerts.model.FireStation;
 import com.safetynet.alerts.repository.DataRepository;
@@ -47,12 +47,11 @@ public class FireStationQueryServiceImplUnitTest {
 
         container = new DataContainer();
         container.setFirestations(stations);
-
-        when(dataRepository.getDataContainer()).thenReturn(container);
     }
 
     @Test
     public void getCoverageByStation_returnsPersonsAndCounts() {
+        when(dataRepository.getDataContainer()).thenReturn(container);
 
         PersonDTO john   = new PersonDTO("John",   "Boyd", 41, CULVER_ST,   "841-874-6512");
         PersonDTO jacob  = new PersonDTO("Jacob",  "Boyd", 36, CULVER_ST,   "841-874-6513");
@@ -77,7 +76,32 @@ public class FireStationQueryServiceImplUnitTest {
     }
 
     @Test
-    public void getCoverageByStation_unknownStation_throwsAddressNotFound() {
-        assertThrows(AddressNotFoundException.class, () -> service.getCoverageByStation("999"));
+    public void getCoverageByStation_UnknownStation_ThrowsStationNotFoundException() {
+        when(dataRepository.getDataContainer()).thenReturn(container);
+        assertThrows(StationNotFoundException.class, () -> service.getCoverageByStation("999"));
     }
+
+    @Test
+    public void getCoverageByStation_StationExistsButOnlyNullOrBlankAddresses_returnsEmptyResult() {
+        container.setFirestations(new ArrayList<>(List.of(
+                new FireStation(null, "7"),
+                new FireStation("   ", "7")
+        )));
+
+        when(dataRepository.getDataContainer()).thenReturn(container);
+
+        assertDoesNotThrow(() -> {
+            FirestationCoverageDTO dto = service.getCoverageByStation("7");
+            assertNotNull(dto);
+            assertEquals(7, dto.getStation());
+            assertNotNull(dto.getPersons());
+            assertTrue(dto.getPersons().isEmpty());
+        });
+    }
+
+    @Test
+    public void getCoverageByStation_blankParam_throwsIllegalArgument() {
+        assertThrows(IllegalArgumentException.class, () -> service.getCoverageByStation(" "));
+    }
+
 }

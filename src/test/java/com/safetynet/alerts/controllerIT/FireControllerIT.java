@@ -59,5 +59,4 @@ public class FireControllerIT {
         assertThatThrownBy(() -> controller.getResidentsByAddress("Unknown Address"))
                 .isInstanceOf(AddressNotFoundException.class);
     }
-
 }

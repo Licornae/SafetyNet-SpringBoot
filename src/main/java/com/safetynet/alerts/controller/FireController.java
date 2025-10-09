@@ -28,7 +28,6 @@ public class FireController {
     /**
      * Collect residents and covering station for the provided address.
      * Responses:
-     * - 200 OK with FireDTO when the address is covered by a station and residents exist.
      * - 404 Not Found when the address is unknown (no station) or no resident found.
      * - 400 Bad Request when the address is blank.
      * @param address non-blank address
