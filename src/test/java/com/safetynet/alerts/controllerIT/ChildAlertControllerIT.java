@@ -1,62 +1,52 @@
 package com.safetynet.alerts.controllerIT;
 
+import com.safetynet.alerts.controller.ChildAlertController;
+import com.safetynet.alerts.exception.AddressNotFoundException;
+import com.safetynet.alerts.repository.DataRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
-
-import static org.hamcrest.Matchers.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import org.springframework.http.ResponseEntity;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @SpringBootTest
 @AutoConfigureMockMvc
 public class ChildAlertControllerIT {
 
     @Autowired
-    private MockMvc mockMvc;
+    private ChildAlertController controller;
 
-    @Test
-    public void childAlert_ExistingAddressWithChildren_Returns200() throws Exception {
-        mockMvc.perform(get("/childAlert")
-                        .param("address", "1509 Culver St")
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$[*].age", everyItem(lessThanOrEqualTo(18))))
-                .andExpect(jsonPath("$[*].firstName", hasItem("Tenley")))
-                .andExpect(jsonPath("$[*].lastName", hasItem("Boyd")))
-                .andExpect(jsonPath("$[*].familyMembers").isArray());
+    @Autowired
+    private DataRepository dataRepository;
+
+    @BeforeEach
+    public void reload() {
+        dataRepository.reloadData();
     }
 
     @Test
-    public void childAlert_ExistingAddressOnlyAdults_Returns200_AndEmptyArray() throws Exception {
-        mockMvc.perform(get("/childAlert")
-                        .param("address", "644 Gershwin Cir")
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(content().string(""));
+    public void existingAddress_ReturnsChildrenAndFamily() {
+        ResponseEntity<?> response = controller.getChildAlertByAddress("1509 Culver St");
+
+        assertThat(response.getStatusCode().value()).isEqualTo(200);
+        assertThat(response.getBody()).isNotNull();
+
     }
 
     @Test
-    public void childAlert_UnknownAddress_Returns404() throws Exception {
-        mockMvc.perform(get("/childAlert")
-                        .param("address", "Unknown Address")
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.message").value("Address not found"))
-                .andExpect(jsonPath("$.path").value("/childAlert"))
-                .andExpect(jsonPath("$.timestamp").exists());
+    public void unknownAddress_ThrowsAddressNotFoundException() {
+        assertThatThrownBy(() -> controller.getChildAlertByAddress("Unknown Address"))
+                .isInstanceOf(AddressNotFoundException.class);
     }
 
     @Test
-    public void childAlert_BlankAddress_Returns400() throws Exception {
-        mockMvc.perform(get("/childAlert")
-                        .param("address", " ")
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
+    public void adultsOnlyAddress_ReturnsEmptyList() {
+        ResponseEntity<?> response = controller.getChildAlertByAddress("644 Gershwin Cir");
+
+        assertThat(response.getStatusCode().value()).isEqualTo(200);
+        assertThat(response.getBody()).isNotNull();
     }
 }

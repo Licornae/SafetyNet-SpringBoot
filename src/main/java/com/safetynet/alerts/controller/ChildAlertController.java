@@ -15,6 +15,8 @@ import java.util.List;
 
 /**
  * REST controller exposing the /childAlert endpoint.
+ * Endpoint:
+ * - GET /childAlert?address={value}
  * Returns children (<= 18 years) living at a given address and their family members.
  */
 @Slf4j

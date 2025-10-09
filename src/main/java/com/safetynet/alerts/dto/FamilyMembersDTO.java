@@ -5,7 +5,13 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * Presentation model for a family member in child alert responses.
+ * DTO representing a family member in childAlert responses.
+ * Fields:
+ * - firstName (String): first name.
+ * - lastName (String): last name.
+ * - ageCategory (String): age category ("Child" or "Adult").
+ * Usage:
+ * - Element of ChildAlertDTO.familyMembers.
  */
 @Data
 @NoArgsConstructor
