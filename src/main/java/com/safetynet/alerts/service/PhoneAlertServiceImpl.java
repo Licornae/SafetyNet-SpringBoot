@@ -16,6 +16,9 @@ import java.util.stream.Collectors;
 
 import com.safetynet.alerts.dto.PersonDTO;
 
+/**
+ * Default implementation of PhoneAlertService.
+ */
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -24,15 +27,21 @@ public class PhoneAlertServiceImpl implements PhoneAlertService {
     private final DataRepository dataRepository;
     private final PeopleWithAgeService peopleWithAgeService;
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<String> getPhonesByFirestation(String stationNumber) {
+        log.info("phoneAlert.getPhonesByFirestation called, station='{}'", stationNumber);
+
         if (stationNumber == null || stationNumber.isBlank()) {
+            log.warn("phoneAlert: blank or null station parameter");
             throw new IllegalArgumentException("firestation parameter is required");
         }
 
         DataContainer dataContainer = dataRepository.getDataContainer();
 
-        //Vérifier si la station existe
+        //Check station existence
         boolean stationExists = dataContainer.getFirestations().stream()
                 .filter(Objects::nonNull)
                 .anyMatch(fireStation -> stationNumber.equals(fireStation.getStation()));
@@ -42,7 +51,7 @@ public class PhoneAlertServiceImpl implements PhoneAlertService {
             throw new StationNotFoundException("This station doesn't exist");
         }
 
-        //Adresses couvertes par la station demandée
+        //Addresses covered by the requested station
         Set<String> coveredAddresses = dataContainer.getFirestations().stream()
                 .filter(firestation -> stationNumber.equals(firestation.getStation()))
                 .map(FireStation::getAddress)
@@ -53,7 +62,7 @@ public class PhoneAlertServiceImpl implements PhoneAlertService {
             return List.of();
         }
 
-        //Numéro de téléphones aux adresses couvertes
+        //Distinct phone numbers at covered addresses
         List<PersonDTO> allPeople = peopleWithAgeService.listAll();
         Set<String> uniquePhones = new HashSet<>();
 
@@ -63,6 +72,8 @@ public class PhoneAlertServiceImpl implements PhoneAlertService {
             if (personDTO.getPhone() == null || personDTO.getPhone().isBlank()) continue;
             uniquePhones.add(personDTO.getPhone().trim());
         }
+
+        log.debug("phoneAlert: returning {} phone(s) for station '{}'", uniquePhones.size(), stationNumber);
 
         return uniquePhones.stream()
                 .toList();

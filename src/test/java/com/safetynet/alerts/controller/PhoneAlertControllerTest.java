@@ -45,13 +45,16 @@ public class PhoneAlertControllerTest {
     @Test
     public void unknown_station_returns_404_with_message() throws Exception {
         when(phoneAlertService.getPhonesByFirestation("999"))
-                .thenThrow(new StationNotFoundException("Cette station n'existe pas"));
+                .thenThrow(new StationNotFoundException("This station doesn't exist"));
 
         mockMvc.perform(get("/phoneAlert")
                         .param("firestation", "999")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
-                .andExpect(content().string("Cette station n'existe pas"));
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.message").value("This station doesn't exist"))
+                .andExpect(jsonPath("$.path").value("/phoneAlert"))
+                .andExpect(jsonPath("$.timestamp").exists());
     }
 
     @Test
