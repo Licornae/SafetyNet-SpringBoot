@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 /**
  * REST controller exposing the /fire endpoint.
+ * Endpoint:
+ * - GET /fire?address={value}
  * Returns the fire station covering the given address and the list of residents
  * with their phone, age, medications and allergies.
  */
@@ -33,8 +35,13 @@ public class FireController {
      * @return 200 OK
      */
     @GetMapping(value = "/fire", params = "address")
-    public ResponseEntity<FireDTO> getResidentsByAddress(
-            @RequestParam @NotBlank String address) {
-        return ResponseEntity.ok(fireService.getResidentsByAddress(address));
+    public ResponseEntity<FireDTO> getResidentsByAddress(@RequestParam @NotBlank String address) {
+        log.info("GET /fire called with address='{}'", address);
+
+        FireDTO result = fireService.getResidentsByAddress(address);
+        log.debug("FireDTO payload for address='{}': {} residents", address, result.getResidents().size());
+
+        return ResponseEntity.ok(result);
     }
+
 }
