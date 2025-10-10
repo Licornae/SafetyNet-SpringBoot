@@ -14,20 +14,30 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 
+/**
+ * Default implementation of FloodService.
+ */
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class FloodServiceImpl implements FloodService {
 
     private final DataRepository dataRepository;
-
     private final MedicalInfoService medicalInfoService;
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<FloodHouseholdDTO> getHouseholdsByStations(List<String> stations) {
+
         if (stations == null || stations.isEmpty() || stations.stream().allMatch(station -> station == null || station.isBlank())) {
+            log.warn("flood: stations parameter is null/empty or contains only blank values");
             throw new IllegalArgumentException("stations must not be blank");
         }
+
+        log.info("flood.getHouseholdsByStations called with {} station(s): {}",stations.size(), stations);
+
 
         DataContainer dataContainer = dataRepository.getDataContainer();
 
@@ -36,7 +46,7 @@ public class FloodServiceImpl implements FloodService {
             throw new DataNotLoadedException("DataContainer not loaded");
         }
 
-        //Récupérer les adresses couvertes par la ou les station(s)
+        //Addresses covered by the given station(s)
         Set<String> coveredAddresses = new LinkedHashSet<>();
         Map<String, String> addressToStation = new LinkedHashMap<>();
 
@@ -52,8 +62,9 @@ public class FloodServiceImpl implements FloodService {
             log.info("No addresses found for stations {}", stations);
             throw new AddressNotFoundException("No households found for given stations");
         }
+        log.debug("Covered addresses count: {} for stations {}", coveredAddresses.size(), stations);
 
-        //Grouper les personnes par adresses couvertes
+        //Group persons by covered addresses
         Map<String, List<Person>> personsByAddress = new LinkedHashMap<>();
 
         for (String address : coveredAddresses) {
@@ -74,7 +85,7 @@ public class FloodServiceImpl implements FloodService {
             throw new AddressNotFoundException("No residents found for given stations");
         }
 
-        //Construire le retour
+        //Build the response
         List<FloodHouseholdDTO> households = new ArrayList<>();
         for (String address : coveredAddresses) {
             List<Person> persons = personsByAddress.getOrDefault(address, List.of());
@@ -99,6 +110,8 @@ public class FloodServiceImpl implements FloodService {
             String station = addressToStation.get(address);
             households.add(new FloodHouseholdDTO(station, address, residents));
         }
+        log.info("flood: returning {} household group(s) for {} station(s)", households.size(), stations.size());
+
         return households;
     }
 }
