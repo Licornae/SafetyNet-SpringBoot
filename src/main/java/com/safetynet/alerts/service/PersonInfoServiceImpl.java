@@ -2,6 +2,7 @@ package com.safetynet.alerts.service;
 
 import com.safetynet.alerts.dto.PersonInfoDTO;
 import com.safetynet.alerts.exception.DataNotLoadedException;
+import com.safetynet.alerts.exception.PersonNotFoundException;
 import com.safetynet.alerts.model.DataContainer;
 import com.safetynet.alerts.model.Person;
 import com.safetynet.alerts.repository.DataRepository;
@@ -14,6 +15,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+/**
+ * Default implementation of PersonInfoService.
+ */
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -23,9 +27,13 @@ public class PersonInfoServiceImpl implements PersonInfoService {
 
     private final MedicalInfoService medicalInfoService;
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<PersonInfoDTO> getPersonInfoByLastName(String lastName) {
         if (lastName == null || lastName.isBlank()) {
+            log.warn("getPersonInfoByLastName called with blank lastName");
             throw new IllegalArgumentException("lastName must not be blank");
         }
 
@@ -43,9 +51,11 @@ public class PersonInfoServiceImpl implements PersonInfoService {
 
         if (result.isEmpty()) {
             log.info("No persons found for lastName={}", lastName);
-        } else {
-            log.debug("Found {} person(s) for lastName={}", result.size(), lastName);
+            throw new PersonNotFoundException("Person not found");
         }
+
+        log.debug("Found {} person(s) for lastName={}", result.size(), lastName);
+
         return result;
     }
 

@@ -1,7 +1,7 @@
 package com.safetynet.alerts.service;
 
-import com.safetynet.alerts.dto.PersonDTO;
 import com.safetynet.alerts.dto.PersonInfoDTO;
+import com.safetynet.alerts.exception.PersonNotFoundException;
 import com.safetynet.alerts.model.DataContainer;
 import com.safetynet.alerts.model.MedicalRecord;
 import com.safetynet.alerts.model.Person;
@@ -114,10 +114,10 @@ public class PersonInfoServiceImplUnitTest {
     }
 
     @Test
-    public void getPersonInfo_UnknownLastName_ReturnsEmpty() {
-        List<PersonInfoDTO> result = service.getPersonInfoByLastName("Unknown");
-        assertNotNull(result);
-        assertTrue(result.isEmpty());
+    public void getPersonInfo_UnknownLastName_ThrowsPersonNotFound() {
+        assertThrows(PersonNotFoundException.class,
+                () -> service.getPersonInfoByLastName("Unknown"));
     }
+
 
 }

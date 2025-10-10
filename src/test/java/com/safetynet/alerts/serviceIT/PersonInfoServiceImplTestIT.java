@@ -1,6 +1,7 @@
 package com.safetynet.alerts.serviceIT;
 
 import com.safetynet.alerts.dto.PersonInfoDTO;
+import com.safetynet.alerts.exception.PersonNotFoundException;
 import com.safetynet.alerts.repository.DataRepository;
 import com.safetynet.alerts.service.PersonInfoServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
@@ -52,14 +53,9 @@ class PersonInfoServiceImplTestIT {
     }
 
     @Test
-    public void testGetPersonInfo_UnknownLastName_ReturnsEmptyList() {
-
-        String lastName = "Unknown";
-
-        List<PersonInfoDTO> persons = personInfoService.getPersonInfoByLastName(lastName);
-
-        assertNotNull(persons, "Always return a list");
-        assertTrue(persons.isEmpty(), "An unknown last name must return an empty list");
+    public void testGetPersonInfo_UnknownLastName_ThrowsPersonNotFound() {
+        assertThrows(PersonNotFoundException.class,
+                () -> personInfoService.getPersonInfoByLastName("Unknown"));
     }
 
 }

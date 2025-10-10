@@ -1,6 +1,7 @@
 package com.safetynet.alerts.controller;
 
 import com.safetynet.alerts.dto.PersonInfoDTO;
+import com.safetynet.alerts.exception.PersonNotFoundException;
 import com.safetynet.alerts.service.PersonInfoService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,11 +51,13 @@ public class PersonInfoControllerTest {
 
     @Test
     public void getPersonInfo_UnknownLastName_Returns200EmptyList() throws Exception {
-        when(personInfoService.getPersonInfoByLastName("Unknown")).thenReturn(List.of());
+        when(personInfoService.getPersonInfoByLastName("Unknown")).thenThrow(new PersonNotFoundException("Person not found"));
 
         mockMvc.perform(get("/personInfolastName").param("lastName", "Unknown"))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$", hasSize(0)));
+                .andExpect(status().isNotFound())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.message").value("Person not found"))
+                .andExpect(jsonPath("$.path").value("/personInfolastName"))
+                .andExpect(jsonPath("$.timestamp").exists());
     }
 }
