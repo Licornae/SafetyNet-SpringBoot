@@ -2,10 +2,12 @@ package com.safetynet.alerts.controller;
 
 import com.safetynet.alerts.dto.EmailDTO;
 import com.safetynet.alerts.exception.CityNotFoundException;
+import com.safetynet.alerts.exception.GlobalExceptionHandler;
 import com.safetynet.alerts.service.CommunityEmailService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -17,6 +19,7 @@ import java.util.List;
 
 import static org.mockito.Mockito.when;
 
+@Import(GlobalExceptionHandler.class)
 @WebMvcTest(CommunityEmailController.class)
 public class CommunityEmailControllerTest {
 
@@ -46,7 +49,10 @@ public class CommunityEmailControllerTest {
 
         mockMvc.perform(get("/communityEmail").param("city", "Unknown"))
                 .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.message").value("Unknown city"));
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.message").value("Unknown city"))
+                .andExpect(jsonPath("$.path").value("/communityEmail"))
+                .andExpect(jsonPath("$.timestamp").exists());
     }
 
     @Test

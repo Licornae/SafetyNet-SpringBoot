@@ -11,6 +11,9 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * Default implementation of CommunityEmailService.
+ */
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -18,9 +21,15 @@ public class CommunityEmailServiceImpl implements CommunityEmailService {
 
     private final DataRepository dataRepository;
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<EmailDTO> getEmailsByCity(String city) {
+        log.info("communityEmail.getEmailsByCity called with city='{}'", city);
+
         if (city == null || city.isBlank()) {
+            log.warn("communityEmail: blank or null city parameter");
             throw new IllegalArgumentException("city must not be blank");
         }
 
@@ -30,6 +39,7 @@ public class CommunityEmailServiceImpl implements CommunityEmailService {
                 .anyMatch(c -> c != null && c.equals(city));
 
         if (!cityExists) {
+            log.warn("communityEmail: city not found '{}'", city);
             throw new CityNotFoundException("Unknown city");
         }
 
@@ -39,9 +49,12 @@ public class CommunityEmailServiceImpl implements CommunityEmailService {
                 .map(Person::getEmail)
                 .toList();
 
-        return emails.stream()
+        List<EmailDTO> distinctEmail = emails.stream()
                 .distinct()
                 .map(EmailDTO::new)
                 .toList();
+        log.info("communityEmail: returning {} distinct email(s) for city='{}'", distinctEmail.size(), city);
+
+        return distinctEmail;
     }
 }
