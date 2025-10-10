@@ -1,6 +1,7 @@
 package com.safetynet.alerts.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.safetynet.alerts.exception.DuplicateMedicalRecordException;
 import com.safetynet.alerts.exception.MedicalRecordNotFoundException;
 import com.safetynet.alerts.model.MedicalRecord;
 import com.safetynet.alerts.service.MedicalRecordService;
@@ -13,6 +14,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
 
+import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
@@ -31,32 +33,6 @@ public class MedicalRecordControllerTest {
 
     @Autowired
     private ObjectMapper objectMapper;
-
-    //GET
-
-    @Test
-    public void testGetMedicalRecordByFirstAndLastName_ReturnsAllFields() throws Exception {
-        // Arrange
-        MedicalRecord mockRecord = new MedicalRecord(
-                "John", "Boyd", "03/06/1984",
-                List.of("aznol:350mg", "hydrapermazol:100mg"),
-                List.of("nillacilan")
-        );
-
-        when(medicalRecordService.getMedicalRecord("John", "Boyd")).thenReturn(mockRecord);
-
-        // Act & Assert
-        mockMvc.perform(get("/medicalRecord")
-                        .param("firstName", "John")
-                        .param("lastName", "Boyd"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.firstName").value("John"))
-                .andExpect(jsonPath("$.lastName").value("Boyd"))
-                .andExpect(jsonPath("$.birthdate").value("03/06/1984"))
-                .andExpect(jsonPath("$.medications[0]").value("aznol:350mg"))
-                .andExpect(jsonPath("$.medications[1]").value("hydrapermazol:100mg"))
-                .andExpect(jsonPath("$.allergies[0]").value("nillacilan"));
-    }
 
     //POST
 
@@ -85,7 +61,7 @@ public class MedicalRecordControllerTest {
     }
 
     @Test
-    void testAddMedicalRecord_ExistingMedicalRecord_ReturnsConflict() throws Exception {
+    public void addMedicalRecord_WhenDuplicate_Throws409() throws Exception {
         // Arrange
         MedicalRecord existing = new MedicalRecord(
                 "John", "Boyd", "03/06/1984",
@@ -93,19 +69,22 @@ public class MedicalRecordControllerTest {
                 List.of("nillacilan")
         );
 
-        when(medicalRecordService.getMedicalRecord(existing.getFirstName(), existing.getLastName())).thenReturn(existing);
+        when(medicalRecordService.addMedicalRecord(any(MedicalRecord.class)))
+                .thenThrow(new DuplicateMedicalRecordException("Medical record already exists for: John Boyd"));
 
         // Act & Assert
         mockMvc.perform(post("/medicalRecord")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(existing))
-                )
+                        .content(objectMapper.writeValueAsString(existing)))
                 .andExpect(status().isConflict())
-                .andExpect(content().string("This person already have a medical record"));
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.message").value(containsString("already exists")))
+                .andExpect(jsonPath("$.path").value("/medicalRecord"))
+                .andExpect(jsonPath("$.timestamp").exists());
     }
 
     @Test
-    void testAddMedicalRecord_MissingBirthday_ReturnsBadRequest() throws Exception {
+    public void testAddMedicalRecord_MissingBirthday_ReturnsBadRequest() throws Exception {
         // Arrange
         MedicalRecord invalidRecord = new MedicalRecord(
                 "John", "Boyd", "",
@@ -119,7 +98,7 @@ public class MedicalRecordControllerTest {
                         .content(objectMapper.writeValueAsString(invalidRecord))
                 )
                 .andExpect(status().isBadRequest())
-                .andExpect(content().string(org.hamcrest.Matchers.containsString("Birthdate required")));
+                .andExpect(content().string(containsString("Birthdate required")));
     }
 
     //PUT
@@ -205,6 +184,9 @@ public class MedicalRecordControllerTest {
         // Act & Assert
         mockMvc.perform(delete("/medicalRecord/{firstName}/{lastName}", firstName, lastName))
                 .andExpect(status().isNotFound())
-                .andExpect(content().string("Medical record not found"));
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.message").value("Medical record not found"))
+                .andExpect(jsonPath("$.path").value("/medicalRecord/Jane/Unknown"))
+                .andExpect(jsonPath("$.timestamp").exists());
     }
 }

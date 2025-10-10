@@ -7,6 +7,12 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
+/**
+ * Medical history record for a single person.
+ * MedicalRecord ties identity (first/last name) to health-related data
+ * such as birthdate, current medications and known allergies.
+ * NotBlank constraints enforce minimal data integrity.
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
