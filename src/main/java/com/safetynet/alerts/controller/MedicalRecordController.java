@@ -105,9 +105,10 @@ public class MedicalRecordController {
 
         boolean deleted = medicalRecordService.deleteMedicalRecord(firstName.trim(), lastName.trim());
         if(deleted) {
-            log.info("Deleted medical record(s) for '{} {}'", firstName, lastName);
+            log.info("Deleted medical records for '{} {}'", firstName, lastName);
             return ResponseEntity.noContent().build();
         }
-        throw new MedicalRecordNotFoundException("Medical record not found for: " + firstName + " " + lastName);
+        log.info("Deletion impossible, medical records not found for: {} {}", firstName, lastName);
+        return ResponseEntity.notFound().build();
     }
 }

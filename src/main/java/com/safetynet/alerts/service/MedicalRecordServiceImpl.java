@@ -34,7 +34,13 @@ public class MedicalRecordServiceImpl implements MedicalRecordService {
     public MedicalRecord getMedicalRecord(String firstName, String lastName) {
         log.debug("getMedicalRecord called with firstName='{}', lastName='{}'", firstName, lastName);
 
-        MedicalRecord result = dataRepository.getDataContainer().getMedicalrecords().stream()
+        DataContainer container = dataRepository.getDataContainer();
+        if (container == null || container.getMedicalrecords() == null) {
+            log.error("getMedicalRecord: DataContainer not loaded");
+            throw new DataNotLoadedException("DataContainer not loaded");
+        }
+
+        MedicalRecord result = container.getMedicalrecords().stream()
                 .filter(mr -> mr.getFirstName().equals(firstName) && mr.getLastName().equals(lastName))
                 .findFirst()
                 .orElse(null);
@@ -113,7 +119,7 @@ public class MedicalRecordServiceImpl implements MedicalRecordService {
             throw new DataNotLoadedException("DataContainer not loaded");
         }
 
-        List<MedicalRecord> medicalRecords = dataRepository.getDataContainer().getMedicalrecords();
+        List<MedicalRecord> medicalRecords = container.getMedicalrecords();
 
         boolean mRRemoved = medicalRecords.removeIf(mr ->
                 mr != null

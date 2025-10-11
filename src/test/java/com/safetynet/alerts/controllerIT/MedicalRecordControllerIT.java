@@ -139,12 +139,13 @@ public class MedicalRecordControllerIT {
     }
 
     @Test
-    public void deleteMedicalRecord_NotFound_ThrowsMedicalRecordNotFoundException() {
+    public void deleteMedicalRecord_NotFound_Returns404() {
         String firstName = "Jane";
         String lastName = "Unknown";
 
-        assertThatThrownBy(() -> controller.deleteMedicalRecord(firstName, lastName))
-                .isInstanceOf(MedicalRecordNotFoundException.class);
-    }
+        ResponseEntity<Void> response = controller.deleteMedicalRecord(firstName, lastName);
 
+        assertThat(response.getStatusCode().value()).isEqualTo(404);
+        assertThat(response.getBody()).isNull();
+    }
 }
