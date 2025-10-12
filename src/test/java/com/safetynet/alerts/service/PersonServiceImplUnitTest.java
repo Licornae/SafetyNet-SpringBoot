@@ -1,5 +1,6 @@
 package com.safetynet.alerts.service;
 
+import com.safetynet.alerts.exception.DuplicatePersonException;
 import com.safetynet.alerts.exception.PersonNotFoundException;
 import com.safetynet.alerts.model.DataContainer;
 import com.safetynet.alerts.model.Person;
@@ -82,6 +83,17 @@ public class PersonServiceImplUnitTest {
         assertSame(newPerson, saved, "Service should return the same instance it added");
         assertTrue(container.getPersons().contains(newPerson));
         assertEquals(3, container.getPersons().size());
+    }
+
+    @Test
+    public void addPerson_Duplicate_ThrowsDuplicatePersonException() {
+        Person existing = new Person("John","Boyd","address","city","zip","phone","mail@mail.com");
+        DataContainer container = new DataContainer();
+        container.setPersons(new ArrayList<>(List.of(existing)));
+        when(dataRepository.getDataContainer()).thenReturn(container);
+
+        Person input = new Person("John","Boyd","a","c","z","p","m@mail.com");
+        assertThrows(DuplicatePersonException.class, () -> service.addPerson(input));
     }
 
     // UPDATE
