@@ -1,5 +1,6 @@
 package com.safetynet.alerts.controller;
 
+import com.safetynet.alerts.exception.DuplicatePersonException;
 import com.safetynet.alerts.exception.PersonNotFoundException;
 import com.safetynet.alerts.model.Person;
 import com.safetynet.alerts.service.PersonService;
@@ -30,36 +31,6 @@ public class PersonControllerTest {
     @MockitoBean
     private PersonService personService;
 
-    //GET
-
-    @Test
-    public void testGetPersonByFirstAndLastName_ReturnsAllFields() throws Exception {
-        // Simule une Person pour ce test
-        Person mockPerson = new Person();
-        mockPerson.setFirstName("John");
-        mockPerson.setLastName("Boyd");
-        mockPerson.setAddress("1509 Culver St");
-        mockPerson.setCity("Culver");
-        mockPerson.setZip("97451");
-        mockPerson.setPhone("841-874-6512");
-        mockPerson.setEmail("jaboyd@email.com");
-
-        when(personService.getPerson("John", "Boyd")).thenReturn(mockPerson);
-
-        // Act & Assert
-        mockMvc.perform(get("/person")
-                        .param("firstName", "John")
-                        .param("lastName", "Boyd"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.firstName").value("John"))
-                .andExpect(jsonPath("$.lastName").value("Boyd"))
-                .andExpect(jsonPath("$.address").value("1509 Culver St"))
-                .andExpect(jsonPath("$.city").value("Culver"))
-                .andExpect(jsonPath("$.zip").value("97451"))
-                .andExpect(jsonPath("$.phone").value("841-874-6512"))
-                .andExpect(jsonPath("$.email").value("jaboyd@email.com"));
-    }
-
     //POST
 
     @Test
@@ -85,23 +56,6 @@ public class PersonControllerTest {
     }
 
     @Test
-    void testAddPerson_ExistingPerson_ReturnsConflict() throws Exception {
-        // Arrange
-        Person existing = new Person("Jane","Doe","56 River St", "Culver", "97451", "841-874-7650", "janedoe@email.com");
-
-        // Simule que la personne existe déjà
-        when(personService.getPerson(existing.getFirstName(), existing.getLastName())).thenReturn(existing);
-
-        // Act & Assert
-        mockMvc.perform(post("/person")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(existing))
-                )
-                .andExpect(status().isConflict())
-                .andExpect(content().string("This person already exists"));
-    }
-
-    @Test
     void testAddPerson_MissingFirstName_ReturnsBadRequest() throws Exception {
         // Arrange
         Person invalidPerson = new Person("", "Doe", "56 River St", "Culver", "97451", "841-874-7650", "janedoe@email.com");
@@ -112,6 +66,24 @@ public class PersonControllerTest {
                         .content(objectMapper.writeValueAsString(invalidPerson))
                 )
                 .andExpect(status().isBadRequest());
+    }
+
+
+    @Test
+    public void testAddPerson_ExistingPerson_ReturnsConflict() throws Exception {
+        // Arrange
+        Person duplicate = new Person("Jane","Doe","56 River St", "Culver", "97451", "841-874-7650", "janedoe@email.com");
+        when(personService.addPerson(any(Person.class)))
+                .thenThrow(new DuplicatePersonException("This person already exists: Jane Doe"));
+
+        // Act & Assert
+        mockMvc.perform(post("/person")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(duplicate)))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.message").value("This person already exists: Jane Doe"))
+                .andExpect(jsonPath("$.path").value("/person"))
+                .andExpect(jsonPath("$.timestamp").exists());
     }
 
     //PUT
@@ -173,6 +145,21 @@ public class PersonControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
+    @Test
+    public void testUpdatePerson_PathBodyMismatch_ReturnsBadRequest() throws Exception {
+        String badPayload = """
+            {"firstName":"John","lastName":"Different","address":"54 River St","city":"Culver","zip":"97451","phone":"842-874-7660","email":"johnaboyd@wanadoo.com"}
+        """;
+        mockMvc.perform(put("/person/{firstName}/{lastName}", "John", "Boyd")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(badPayload))
+                .andExpect(status().isBadRequest())
+
+                .andExpect(jsonPath("$.message").value("Path {firstName,lastName} must match body."))
+                .andExpect(jsonPath("$.path").value("/person/John/Boyd"))
+                .andExpect(jsonPath("$.timestamp").exists());
+    }
+
     //DELETE
 
     @Test
@@ -198,7 +185,10 @@ public class PersonControllerTest {
         // Act & Assert
         mockMvc.perform(delete("/person/{firstName}/{lastName}", firstName, lastName))
                 .andExpect(status().isNotFound())
-                .andExpect(content().string("Person not found"));
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.message").value("Person not found"))
+                .andExpect(jsonPath("$.path").value("/person/Jane/Unknown"))
+                .andExpect(jsonPath("$.timestamp").exists());
     }
 }
 

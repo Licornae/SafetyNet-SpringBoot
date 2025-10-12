@@ -5,6 +5,12 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import jakarta.validation.constraints.NotBlank;
 
+/**
+ * Domain model representing a person stored in the dataset.
+ * Validation:
+ * - All main identity and contact fields are required (NotBlank).
+ * - Email is optional but validated when provided.
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

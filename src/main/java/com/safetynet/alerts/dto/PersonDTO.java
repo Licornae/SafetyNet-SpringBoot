@@ -6,7 +6,15 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * Lightweight view of a person enriched with computed age.
+ * Lightweight person view enriched with computed age.
+ * Fields:
+ * - firstName (String): first name.
+ * - lastName (String): last name.
+ * - age (int): computed age.
+ * - address (String): postal address.
+ * - phone (String): phone number.
+ * Usage:
+ * - Element of FirestationCoverageDTO.persons.
  */
 @Data
 @NoArgsConstructor

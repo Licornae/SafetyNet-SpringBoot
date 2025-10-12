@@ -129,7 +129,7 @@ public class MedicalInfoServiceImpl implements MedicalInfoService {
             return Collections.emptyList();
         }
 
-        log.trace("getAllergiesFor: {} allerg(ies) for {} {}", allergies.size(), person.getFirstName(), person.getLastName());
+        log.trace("getAllergiesFor: {} allergies for {} {}", allergies.size(), person.getFirstName(), person.getLastName());
         return allergies;
     }
 }
