@@ -2,6 +2,7 @@ package com.safetynet.alerts.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.safetynet.alerts.exception.AddressNotFoundException;
+import com.safetynet.alerts.exception.DuplicateFireStationException;
 import com.safetynet.alerts.model.FireStation;
 
 import com.safetynet.alerts.service.FireStationService;
@@ -12,8 +13,10 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -32,22 +35,6 @@ public class FireStationControllerTest {
 
     @MockitoBean
     private FireStationService fireStationService;
-
-    //GET
-
-    @Test
-    void testGetStationNumberByAddress_ReturnsStationNumber() throws Exception {
-        // Arrange
-        String address = "1509 Culver St";
-        FireStation mockStation = new FireStation(address, "3");
-        when(fireStationService.getFireStation(address)).thenReturn(mockStation);
-
-        // Act & Assert
-        mockMvc.perform(get("/firestation").param("address", address))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.station").value("3"))
-                .andExpect(jsonPath("$.address").value(address));
-    }
 
     //POST
 
@@ -69,18 +56,20 @@ public class FireStationControllerTest {
     }
 
     @Test
-    void testAddFireStation_ExistingFireStation_ReturnsConflict() throws Exception {
-        // Arrange
-        FireStation duplicate = new FireStation("1509 Culver St", "3");
+    public void testAddFireStation_ExistingFireStation_Returns409() throws Exception {
+        FireStation payload = new FireStation("1509 Culver St", "3");
 
-        when(fireStationService.getFireStation("1509 Culver St")).thenReturn(duplicate);
+        when(fireStationService.addFireStation(any(FireStation.class)))
+                .thenThrow(new DuplicateFireStationException("This address already refers to a station: 1509 Culver St"));
 
-        // Act & Assert
         mockMvc.perform(post("/firestation")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(duplicate)))
+                        .content(objectMapper.writeValueAsString(payload)))
                 .andExpect(status().isConflict())
-                .andExpect(content().string("This address already refers to a station"));
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.message").value(containsString("This address already refers to a station")))
+                .andExpect(jsonPath("$.path").value("/firestation"))
+                .andExpect(jsonPath("$.timestamp").exists());
     }
 
     //PUT
@@ -104,7 +93,7 @@ public class FireStationControllerTest {
     }
 
     @Test
-    public void testUpdateStationAddress_NotFound() throws Exception {
+    public void testUpdateStationAddress_NotFound_Returns404() throws Exception {
         // Arrange
         String address = "Unknown";
         String updatedPayload = "{\"address\":\"Unknown\",\"station\":\"2\"}";
@@ -119,8 +108,23 @@ public class FireStationControllerTest {
                 .andExpect(status().isNotFound());
     }
 
+
     @Test
-    public void testUpdateStationAddress_BadRequest() throws Exception {
+    public void testUpdateStationAddress_PathBodyMismatch_Returns400() throws Exception {
+        String pathAddress = "1509 Culver St";
+        FireStation body = new FireStation("MISMATCH", "3");
+
+        mockMvc.perform(put("/firestation/{address}", pathAddress)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(body)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message", containsString("Path/body mismatch")))
+                .andExpect(jsonPath("$.path").value("/firestation/1509%20Culver%20St"))
+                .andExpect(jsonPath("$.timestamp").exists());
+    }
+
+    @Test
+    public void testUpdateStationAddress_BadRequest_Returns400() throws Exception {
         // Arrange
         String address = "1509 Culver St";
         String badPayload = "{\"address\":\"1509 Culver St\"}";
@@ -135,7 +139,7 @@ public class FireStationControllerTest {
     //DELETE
 
     @Test
-    void testDeleteFireStation_Successful() throws Exception {
+    public void testDeleteFireStation_Successful() throws Exception {
         String address = "1509 Culver St";
         when(fireStationService.deleteFireStationByAddress(address)).thenReturn(true);
 
@@ -144,29 +148,34 @@ public class FireStationControllerTest {
     }
 
     @Test
-    void testDeleteFireStation_NotFound() throws Exception {
+    public void deleteFireStation_AddressNotFound_Returns404() throws Exception {
         String address = "unknown";
-        when(fireStationService.deleteFireStationByAddress(address)).thenReturn(false);
+
+        doThrow(new AddressNotFoundException("Address not found : " + address))
+                .when(fireStationService).deleteFireStationByAddress(address);
 
         mockMvc.perform(delete("/firestation").param("address", address))
-                .andExpect(status().isNotFound());
+                .andExpect(status().isNotFound())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.message", containsString("Address not found")))
+                .andExpect(jsonPath("$.path", containsString("/firestation")));
     }
 
     @Test
-    void deleteByStation_ok_returns204() throws Exception {
-        //confirm=YES, le service supprime quelque chose
+    public void deleteByStation_ok_returns204() throws Exception {
+        //confirm=YES, the service execute a deletion
         when(fireStationService.countByStation(eq("3"))).thenReturn(5);
         when(fireStationService.deleteFireStationsByStation(eq("3"))).thenReturn(true);
 
         mockMvc.perform(delete("/firestation")
                         .param("station", "3")
                         .param("confirm", "YES"))
-                .andExpect(status().isNoContent()); // 204
+                .andExpect(status().isNoContent());
     }
 
     @Test
-    void deleteByStation_missingConfirm_returns400() throws Exception {
-        //pas de confirm => 400
+    public void deleteByStation_missingConfirm_returns400() throws Exception {
+        //no confirmation => 400
         when(fireStationService.countByStation(eq("3"))).thenReturn(5);
 
         mockMvc.perform(delete("/firestation")

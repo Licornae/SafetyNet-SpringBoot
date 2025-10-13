@@ -1,5 +1,6 @@
 package com.safetynet.alerts.serviceIT;
 
+import com.safetynet.alerts.exception.AddressNotFoundException;
 import com.safetynet.alerts.model.FireStation;
 import com.safetynet.alerts.repository.DataRepository;
 import com.safetynet.alerts.service.FireStationService;
@@ -52,25 +53,23 @@ public class FireStationServiceImplTestIT {
 
     @Test
     public void testWhenDeletingExistingFireStationAddress_thenAddressIsRemoved() {
-        // Arrange
         String address = "1509 Culver St";
-        fireStationService.addFireStation(new FireStation(address, "3"));
-        // Act
+
+        assertNotNull(fireStationService.getFireStation(address), "Address must exist before deletion");
+
         boolean deleted = fireStationService.deleteFireStationByAddress(address);
-        // Assert
+
         assertTrue(deleted, "Should return true for an existing address");
         assertNull(fireStationService.getFireStation(address), "The address should not exist after deletion");
     }
 
     @Test
-    public void testWhenDeletingUnknownFireStationAddress_thenReturnFalse() {
-        // Arrange
+    public void testWhenDeletingUnknownFireStationAddress_ThenThrowsAddressNotFound() {
         String unknownAddress = "Unknown Address";
-        // Act
-        boolean deleted = fireStationService.deleteFireStationByAddress(unknownAddress);
-        // Assert
-        assertFalse(deleted, "Delete an unknown address should return false");
-    }
 
+        assertThrows(AddressNotFoundException.class,
+                () -> fireStationService.deleteFireStationByAddress(unknownAddress),
+                "Deleting an unknown address must throw AddressNotFoundException");
+    }
 }
 
