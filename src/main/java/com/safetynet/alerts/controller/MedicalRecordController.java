@@ -1,6 +1,5 @@
 package com.safetynet.alerts.controller;
 
-import com.safetynet.alerts.exception.MedicalRecordNotFoundException;
 import com.safetynet.alerts.model.MedicalRecord;
 import com.safetynet.alerts.service.MedicalRecordService;
 import jakarta.validation.Valid;

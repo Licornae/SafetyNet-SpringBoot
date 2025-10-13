@@ -3,7 +3,7 @@ package com.safetynet.alerts.service;
 import com.safetynet.alerts.model.Person;
 
 /**
- * Business service for managing Person entities.
+ * Service API for managing Person entities.
  * Contract:
  * - addPerson: throws DuplicatePersonException if (firstName, lastName) already exists.
  * - updatePerson: throws PersonNotFoundException if the target person does not exist.

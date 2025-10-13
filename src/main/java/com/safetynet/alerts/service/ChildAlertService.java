@@ -4,6 +4,10 @@ import com.safetynet.alerts.dto.ChildAlertDTO;
 
 import java.util.List;
 
+/**
+ * Service for the /childAlert endpoint use case:
+ * given an address, return the covering children with age and their family members.
+ */
 public interface ChildAlertService {
 
     /**
