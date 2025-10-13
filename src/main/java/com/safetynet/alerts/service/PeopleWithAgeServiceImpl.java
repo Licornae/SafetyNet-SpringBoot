@@ -29,7 +29,7 @@ public class PeopleWithAgeServiceImpl implements PeopleWithAgeService {
         DataContainer dataContainer = dataRepository.getDataContainer();
 
         if(dataContainer == null){
-            log.warn("Data container is null, returning empty list");
+            log.error("Data container is null, returning empty list");
             return List.of();
         }
 
@@ -44,9 +44,9 @@ public class PeopleWithAgeServiceImpl implements PeopleWithAgeService {
             if (mr != null) {
                 try {
                     age = AgeCalculator.computeAge(mr.getBirthdate());
-                    log.trace("Computed age={} for {} {}", age, person.getFirstName(), person.getLastName());
+                    log.debug("Computed age={} for {} {}", age, person.getFirstName(), person.getLastName());
                 } catch (Exception e) {
-                    log.debug("Invalid birthdate for {} {}: {}", person.getFirstName(), person.getLastName(), e.getMessage());
+                    log.error("Invalid birthdate for {} {}: {}", person.getFirstName(), person.getLastName(), e.getMessage());
                 }
             }
 
@@ -60,8 +60,8 @@ public class PeopleWithAgeServiceImpl implements PeopleWithAgeService {
                     person.getPhone()
             ));
         }
-
         log.debug("PeopleWithAgeServiceImpl.listAll() completed: built {} PersonDTO(s)", people.size());
+
         return people;
     }
 

@@ -37,7 +37,7 @@ public class FireServiceImpl implements FireService {
         String normAddress = AddressNormalizer.normalize(address);
 
         if (normAddress == null || normAddress.isBlank()) {
-            log.warn("getResidentsByAddress called with blank address (raw='{}')", address);
+            log.error("getResidentsByAddress called with blank address (raw='{}')", address);
             throw new IllegalArgumentException("address must not be blank");
         }
 
@@ -55,7 +55,7 @@ public class FireServiceImpl implements FireService {
                 .orElse(null);
 
         if (fireStation == null) {
-            log.warn("getResidentsByAddress('{}'): no station found (normalized='{}')", address, normAddress);
+            log.error("getResidentsByAddress('{}'): no station found (normalized='{}')", address, normAddress);
             throw new AddressNotFoundException("No station for address " + address);
         }
 
@@ -65,7 +65,7 @@ public class FireServiceImpl implements FireService {
                 .toList();
 
         if (personsAtAddress.isEmpty()) {
-            log.warn("getResidentsByAddress('{}'): station='{}' but no residents", address, fireStation.getStation());
+            log.error("getResidentsByAddress('{}'): station='{}' but no residents", address, fireStation.getStation());
             throw new ResidentsNotFoundException("No residents at address " + address);
         }
 
@@ -85,8 +85,7 @@ public class FireServiceImpl implements FireService {
                     allergies
             ));
         }
-
-        log.info("getResidentsByAddress('{}'): station='{}', residents={}", address, fireStation.getStation(), residents.size());
+        log.debug("getResidentsByAddress('{}'): station='{}', residents={}", address, fireStation.getStation(), residents.size());
 
         return new FireDTO(fireStation.getStation(),residents);
     }

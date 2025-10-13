@@ -63,11 +63,11 @@ public class PersonServiceImpl implements PersonService {
 
         Person existing = getPerson(person.getFirstName(), person.getLastName());
         if (existing != null) {
-            log.warn("addPerson: duplicate for '{} {}'", person.getFirstName(), person.getLastName());
+            log.error("addPerson: duplicate for '{} {}'", person.getFirstName(), person.getLastName());
             throw new DuplicatePersonException("This person already exists: " + person.getFirstName() + " " + person.getLastName());
         }
         dataRepository.getDataContainer().getPersons().add(person);
-        log.info("addPerson: created record for: {} {}", person.getFirstName(), person.getLastName());
+        log.debug("addPerson: created record for: {} {}", person.getFirstName(), person.getLastName());
 
         return person;
     }
@@ -97,7 +97,7 @@ public class PersonServiceImpl implements PersonService {
                 return person;
             }
         }
-        log.warn("updatePerson: record not found for '{} {}'", firstName, lastName);
+        log.error("updatePerson: record not found for '{} {}'", firstName, lastName);
         throw new PersonNotFoundException("Person not found: " + firstName + " " + lastName);
     }
 
@@ -125,7 +125,7 @@ public class PersonServiceImpl implements PersonService {
         if (personRemoved) {
             log.info("deletePerson: deleted record(s) for '{} {}'", firstName, lastName);
         } else {
-            log.warn("deletePerson: no record found for '{} {}'", firstName, lastName);
+            log.error("deletePerson: no record found for '{} {}'", firstName, lastName);
         }
 
         return personRemoved;

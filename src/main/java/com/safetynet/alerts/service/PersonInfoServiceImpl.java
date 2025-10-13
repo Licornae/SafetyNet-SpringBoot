@@ -33,7 +33,7 @@ public class PersonInfoServiceImpl implements PersonInfoService {
     @Override
     public List<PersonInfoDTO> getPersonInfoByLastName(String lastName) {
         if (lastName == null || lastName.isBlank()) {
-            log.warn("getPersonInfoByLastName called with blank lastName");
+            log.error("getPersonInfoByLastName called with blank lastName");
             throw new IllegalArgumentException("lastName must not be blank");
         }
 
@@ -50,10 +50,9 @@ public class PersonInfoServiceImpl implements PersonInfoService {
                 .collect(Collectors.toList());
 
         if (result.isEmpty()) {
-            log.info("No persons found for lastName={}", lastName);
+            log.error("No persons found for lastName={}", lastName);
             throw new PersonNotFoundException("Person not found");
         }
-
         log.debug("Found {} person(s) for lastName={}", result.size(), lastName);
 
         return result;

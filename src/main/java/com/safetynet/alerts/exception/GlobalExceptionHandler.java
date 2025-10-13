@@ -26,6 +26,14 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    private Map<String, Object> errorBody(String message, HttpServletRequest req) {
+        return Map.of(
+                "message", message,
+                "path", req.getRequestURI(),
+                "timestamp", OffsetDateTime.now().toString()
+        );
+    }
+
     /**
      * Not found exceptions to HTTP 404.
      * Behavior:
@@ -45,13 +53,9 @@ public class GlobalExceptionHandler {
     })
     public ResponseEntity<Map<String, Object>> handleNotFound(RuntimeException exception, HttpServletRequest req) {
 
-        log.info("404 Not Found [{} {}] {}: {}", req.getMethod(), req.getRequestURI(), exception.getClass().getSimpleName(), exception.getMessage());
+        log.error("404 Not Found [{} {}] {}: {}", req.getMethod(), req.getRequestURI(), exception.getClass().getSimpleName(), exception.getMessage());
 
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of(
-                "message", exception.getMessage(),
-                "path", req.getRequestURI(),
-                "timestamp", OffsetDateTime.now().toString()
-        ));
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorBody(exception.getMessage(), req));
     }
 
     /**
@@ -66,14 +70,10 @@ public class GlobalExceptionHandler {
     @ExceptionHandler({DuplicateMedicalRecordException.class, DuplicatePersonException.class, DuplicateFireStationException.class})
     public ResponseEntity<Map<String, Object>> handleConflict(RuntimeException exception,
                                                               HttpServletRequest req) {
-        log.info("409 Conflict [{} {}] {}: {}", req.getMethod(), req.getRequestURI(),
+        log.error("409 Conflict [{} {}] {}: {}", req.getMethod(), req.getRequestURI(),
                 exception.getClass().getSimpleName(), exception.getMessage());
 
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of(
-                "message", exception.getMessage(),
-                "path", req.getRequestURI(),
-                "timestamp", OffsetDateTime.now().toString()
-        ));
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(errorBody(exception.getMessage(), req));
     }
 
     /**
@@ -86,12 +86,16 @@ public class GlobalExceptionHandler {
      * @return ResponseEntity with status 400 and a list of readable validation messages
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<List<String>> handleValidation(MethodArgumentNotValidException e) {
+    public ResponseEntity<List<String>> handleValidation(MethodArgumentNotValidException e,
+                                                         HttpServletRequest req) {
         List<String> errors = e.getBindingResult()
                 .getFieldErrors()
                 .stream()
                 .map(error -> error.getField() + ": " + error.getDefaultMessage())
                 .toList();
+
+        log.error("400 Bad Request MethodArgumentNotValidException: [{} {}] {}: {}", req.getMethod(), req.getRequestURI(), e.getClass().getSimpleName(), errors);
+
         return ResponseEntity.badRequest().body(errors);
     }
 
@@ -104,7 +108,11 @@ public class GlobalExceptionHandler {
      * @return ResponseEntity with status 400 and a short explanatory message
      */
     @ExceptionHandler(jakarta.validation.ConstraintViolationException.class)
-    public ResponseEntity<Object> handleConstraintViolation(jakarta.validation.ConstraintViolationException e) {
+    public ResponseEntity<Object> handleConstraintViolation(jakarta.validation.ConstraintViolationException e,
+                                                            HttpServletRequest req) {
+
+        log.error("400 Bad Request ConstraintViolationException: [{} {}] {}: {}", req.getMethod(), req.getRequestURI(), e.getClass().getSimpleName(), "Invalid request parameters");
+
         return ResponseEntity.badRequest().body("Invalid request parameters");
     }
 
@@ -120,13 +128,9 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(DataNotLoadedException.class)
     public ResponseEntity<Map<String, Object>> handleServiceUnavailable(DataNotLoadedException ex,
                                                                         HttpServletRequest req) {
-        log.info("503 Service Unavailable [{} {}] {}: {}", req.getMethod(), req.getRequestURI(), ex.getClass().getSimpleName(), ex.getMessage());
+        log.error("503 Service Unavailable [{} {}] {}: {}", req.getMethod(), req.getRequestURI(), ex.getClass().getSimpleName(), ex.getMessage());
 
-        return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(Map.of(
-                "message", ex.getMessage(),
-                "path", req.getRequestURI(),
-                "timestamp", OffsetDateTime.now().toString()
-        ));
+        return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(errorBody(ex.getMessage(), req));
     }
 
     /**
@@ -141,13 +145,18 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<Map<String, Object>> handleIllegalArgument(IllegalArgumentException ex,
                                                                      HttpServletRequest req) {
-        log.info("400 Bad Request [{} {}] {}: {}", req.getMethod(), req.getRequestURI(), ex.getClass().getSimpleName(), ex.getMessage());
+        log.error("400 Bad Request IllegalArgumentException: [{} {}] {}: {}", req.getMethod(), req.getRequestURI(), ex.getClass().getSimpleName(), ex.getMessage());
 
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(
-                "message", ex.getMessage(),
-                "path", req.getRequestURI(),
-                "timestamp", OffsetDateTime.now().toString()
-        ));
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorBody(ex.getMessage(), req));
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<Map<String, Object>> handleGeneric(Exception ex, HttpServletRequest req) {
+
+        log.error("500 Internal Server Error [{} {}] {}", req.getMethod(), req.getRequestURI(), ex.getClass().getSimpleName(), ex);
+
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(errorBody("Internal error", req));
     }
 
 }

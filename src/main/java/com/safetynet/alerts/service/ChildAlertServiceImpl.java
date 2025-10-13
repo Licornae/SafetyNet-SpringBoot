@@ -37,7 +37,7 @@ public class ChildAlertServiceImpl implements ChildAlertService {
         String normAddress = AddressNormalizer.normalize(address);
 
         if (normAddress == null || normAddress.isBlank()) {
-            log.warn("getChildrenByAddress called with blank address");
+            log.error("getChildrenByAddress called with blank address");
             throw new IllegalArgumentException("address is required");
         }
 
@@ -48,7 +48,7 @@ public class ChildAlertServiceImpl implements ChildAlertService {
                 .anyMatch(a-> equalsNormalized(a, normAddress));
 
         if (!addressExists) {
-            log.warn("Address not found for input='{}'", address);
+            log.error("Address not found for input='{}'", address);
             throw new AddressNotFoundException("Address not found");
         }
 

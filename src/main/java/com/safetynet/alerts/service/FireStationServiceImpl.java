@@ -45,7 +45,7 @@ public class FireStationServiceImpl implements FireStationService {
                 .orElse(null);
 
         if (result == null) {
-            log.debug("getFireStation: no mapping found for address='{}'", address);
+            log.error("getFireStation: no mapping found for address='{}'", address);
         } else {
             log.debug("getFireStation: mapping found for address='{}' -> station='{}'", address, result.getStation());
         }
@@ -66,12 +66,12 @@ public class FireStationServiceImpl implements FireStationService {
                 fireStation1 != null && fireStation.getAddress().equals(fireStation1.getAddress()));
 
         if (exists) {
-            log.warn("addFireStation: duplicate mapping for address='{}'", fireStation.getAddress());
+            log.error("addFireStation: duplicate mapping for address='{}'", fireStation.getAddress());
             throw new DuplicateFireStationException("This address already refers to a station: " + fireStation.getAddress());
         }
 
         list.add(fireStation);
-        log.info("addFireStation: created mapping address='{}' -> station='{}'", fireStation.getAddress(), fireStation.getStation());
+        log.debug("addFireStation: created mapping address='{}' -> station='{}'", fireStation.getAddress(), fireStation.getStation());
 
         return fireStation;
     }
@@ -95,12 +95,12 @@ public class FireStationServiceImpl implements FireStationService {
             if (fireStation.getAddress().equals(address)) {
                 String oldStation = fireStation.getStation();
                 fireStation.setStation(updatedFireStationAddress.getStation());
-                log.info("updateStationAddress: address='{}' station updated '{}' -> '{}'", address, oldStation, fireStation.getStation());
+                log.debug("updateStationAddress: address='{}' station updated '{}' -> '{}'", address, oldStation, fireStation.getStation());
 
                 return fireStation;
             }
         }
-        log.warn("updateStationAddress: address not found '{}'", address);
+        log.error("updateStationAddress: address not found '{}'", address);
         throw new AddressNotFoundException("Address not found : " + address);
     }
 
@@ -121,10 +121,10 @@ public class FireStationServiceImpl implements FireStationService {
         boolean removed = fireStations.removeIf(fireStation -> address.equals(fireStation.getAddress()));
 
         if (!removed) {
-            log.warn("deleteFireStationByAddress: no mapping found for address='{}'", address);
+            log.error("deleteFireStationByAddress: no mapping found for address='{}'", address);
             throw new AddressNotFoundException("Address not found : " + address);
         }
-        log.info("deleteFireStationByAddress: deleted mapping for address='{}'", address);
+        log.debug("deleteFireStationByAddress: deleted mapping for address='{}'", address);
 
         return true;
     }
@@ -145,8 +145,8 @@ public class FireStationServiceImpl implements FireStationService {
         int count = (int) container.getFirestations().stream()
                 .filter(fireStation -> station.equals(fireStation.getStation()))
                 .count();
-
         log.debug("countByStation: station='{}' has {} mapping(s)", station, count);
+
         return count;
     }
 
@@ -170,10 +170,10 @@ public class FireStationServiceImpl implements FireStationService {
         int removed = before - list.size();
 
         if (removed == 0) {
-            log.warn("deleteFireStationsByStation: no mappings found for station='{}'", station);
+            log.error("deleteFireStationsByStation: no mappings found for station='{}'", station);
             throw new StationNotFoundException("No mapping found for station: " + station);
         }
-        log.info("deleteFireStationsByStation: deleted {} mapping(s) for station='{}'", removed, station);
+        log.debug("deleteFireStationsByStation: deleted {} mapping(s) for station='{}'", removed, station);
 
         return true;
     }

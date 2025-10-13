@@ -26,10 +26,10 @@ public class CommunityEmailServiceImpl implements CommunityEmailService {
      */
     @Override
     public List<EmailDTO> getEmailsByCity(String city) {
-        log.info("communityEmail.getEmailsByCity called with city='{}'", city);
+        log.debug("communityEmail.getEmailsByCity called with city='{}'", city);
 
         if (city == null || city.isBlank()) {
-            log.warn("communityEmail: blank or null city parameter");
+            log.error("communityEmail: blank or null city parameter");
             throw new IllegalArgumentException("city must not be blank");
         }
 
@@ -39,7 +39,7 @@ public class CommunityEmailServiceImpl implements CommunityEmailService {
                 .anyMatch(c -> c != null && c.equals(city));
 
         if (!cityExists) {
-            log.warn("communityEmail: city not found '{}'", city);
+            log.error("communityEmail: city not found '{}'", city);
             throw new CityNotFoundException("Unknown city");
         }
 
@@ -53,7 +53,7 @@ public class CommunityEmailServiceImpl implements CommunityEmailService {
                 .distinct()
                 .map(EmailDTO::new)
                 .toList();
-        log.info("communityEmail: returning {} distinct email(s) for city='{}'", distinctEmail.size(), city);
+        log.debug("communityEmail: returning {} distinct email(s) for city='{}'", distinctEmail.size(), city);
 
         return distinctEmail;
     }

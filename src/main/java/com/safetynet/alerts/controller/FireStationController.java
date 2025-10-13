@@ -71,7 +71,7 @@ public class FireStationController {
 
         //path and body consistency check
         if (updatedFireStationAddress.getAddress() != null && !address.equals(updatedFireStationAddress.getAddress())) {
-            log.warn("Path/body mismatch on address. path='{}', body='{}'", address, updatedFireStationAddress.getAddress());
+            log.error("Path/body mismatch on address. path='{}', body='{}'", address, updatedFireStationAddress.getAddress());
             throw new IllegalArgumentException("Path/body mismatch: address must equal '" + address + "'");
         }
 
@@ -141,8 +141,8 @@ public class FireStationController {
         }
 
         fireStationService.deleteFireStationsByStation(station);
+        log.info("Deleted {} firestation mapping(s) for station='{}'", count, station);
 
-        log.warn("Deleted {} firestation mapping(s) for station='{}'", count, station);
         return ResponseEntity.noContent().build();
     }
 }

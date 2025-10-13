@@ -75,6 +75,7 @@ public class MedicalRecordController {
         //path and body consistency check
         if ((medicalRecord.getFirstName() != null && !medicalRecord.getFirstName().equals(firstName))
                 || (medicalRecord.getLastName() != null && !medicalRecord.getLastName().equals(lastName))) {
+            log.error("Path/body medical record mismatch. path='{} {}', body='{}{}'", firstName, lastName, medicalRecord.getFirstName(), medicalRecord.getLastName());
             throw new IllegalArgumentException("Path {firstName,lastName} must match body.");
         }
 
@@ -107,7 +108,8 @@ public class MedicalRecordController {
             log.info("Deleted medical records for '{} {}'", firstName, lastName);
             return ResponseEntity.noContent().build();
         }
-        log.info("Deletion impossible, medical records not found for: {} {}", firstName, lastName);
+        log.error("Deletion impossible, medical records not found for: {} {}", firstName, lastName);
+
         return ResponseEntity.notFound().build();
     }
 }

@@ -44,7 +44,7 @@ public class PersonController {
      */
     @PostMapping("/person")
     public ResponseEntity<?> addPerson(@Valid @RequestBody Person person) {
-        log.debug("POST /person for: {}", person);
+        log.info("POST /person for: {}", person);
 
         Person created = personService.addPerson(person);
 
@@ -76,6 +76,7 @@ public class PersonController {
         //path and body consistency check
         if ((person.getFirstName() != null && !person.getFirstName().equals(firstName))
                 || (person.getLastName() != null && !person.getLastName().equals(lastName))) {
+            log.error("Path/body Person mismatch. path='{} {}', body='{}{}'", firstName, lastName, person.getFirstName(), person.getLastName());
             throw new IllegalArgumentException("Path {firstName,lastName} must match body.");
         }
 
@@ -108,7 +109,8 @@ public class PersonController {
             log.info("Deleted person '{} {}'", firstName, lastName);
             return ResponseEntity.noContent().build();
         }
-        log.info("Deletion impossible, person not found: {} {}", firstName, lastName);
+        log.error("Deletion impossible, person not found: {} {}", firstName, lastName);
+
         return ResponseEntity.notFound().build();
     }
 }

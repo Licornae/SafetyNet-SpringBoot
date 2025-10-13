@@ -67,12 +67,12 @@ public class MedicalRecordServiceImpl implements MedicalRecordService {
                 mr != null && medicalRecord.getFirstName().equals(mr.getFirstName()) && medicalRecord.getLastName().equals(mr.getLastName()));
 
         if (exists) {
-            log.warn("addMedicalRecord: duplicate for '{} {}'", medicalRecord.getFirstName(), medicalRecord.getLastName());
+            log.error("addMedicalRecord: duplicate for '{} {}'", medicalRecord.getFirstName(), medicalRecord.getLastName());
             throw new DuplicateMedicalRecordException("Medical record already exists for: " + medicalRecord.getFirstName() + " " + medicalRecord.getLastName());
         }
 
         listMR.add(medicalRecord);
-        log.info("addMedicalRecord: created record for '{} {}'", medicalRecord.getFirstName(), medicalRecord.getLastName());
+        log.debug("addMedicalRecord: created record for '{} {}'", medicalRecord.getFirstName(), medicalRecord.getLastName());
 
         return medicalRecord;
     }
@@ -97,12 +97,12 @@ public class MedicalRecordServiceImpl implements MedicalRecordService {
                 medicalRecord.setBirthdate(updatedMedicalRecord.getBirthdate());
                 medicalRecord.setMedications(updatedMedicalRecord.getMedications());
                 medicalRecord.setAllergies(updatedMedicalRecord.getAllergies());
-                log.info("updateMedicalRecord: updated record for '{} {}'", firstName, lastName);
+                log.debug("updateMedicalRecord: updated record for '{} {}'", firstName, lastName);
 
                 return medicalRecord;
             }
         }
-        log.warn("updateMedicalRecord: record not found for '{} {}'", firstName, lastName);
+        log.error("updateMedicalRecord: record not found for '{} {}'", firstName, lastName);
         throw new MedicalRecordNotFoundException("Medical record not found for: " + firstName + " " + lastName);
     }
 
@@ -128,9 +128,9 @@ public class MedicalRecordServiceImpl implements MedicalRecordService {
         );
 
         if (mRRemoved) {
-            log.info("deleteMedicalRecord: deleted record(s) for '{} {}'", firstName, lastName);
+            log.debug("deleteMedicalRecord: deleted record(s) for '{} {}'", firstName, lastName);
         } else {
-            log.warn("deleteMedicalRecord: no record found for '{} {}'", firstName, lastName);
+            log.error("deleteMedicalRecord: no record found for '{} {}'", firstName, lastName);
         }
 
         return mRRemoved;

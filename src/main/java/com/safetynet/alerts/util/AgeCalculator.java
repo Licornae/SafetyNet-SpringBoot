@@ -32,7 +32,7 @@ public class AgeCalculator {
     public static Integer computeAge(String birthdateStr) throws InvalidBirthdateException {
 
         if (birthdateStr == null || birthdateStr.isBlank()){
-            log.warn("computeAge: input birthdate is null or blank");
+            log.error("computeAge: input birthdate is null or blank");
             throw new InvalidBirthdateException(birthdateStr, "NULL_OR_BLANK");
         }
 
@@ -44,7 +44,7 @@ public class AgeCalculator {
             return years;
 
         } catch (DateTimeParseException e) {
-            log.warn("computeAge: invalid format for birthdate='{}' (expected MM/dd/yyyy)", birthdateStr);
+            log.error("computeAge: invalid format for birthdate='{}' (expected MM/dd/yyyy)", birthdateStr);
             throw new InvalidBirthdateException(birthdateStr, "BAD_FORMAT");
         }
     }
@@ -57,7 +57,7 @@ public class AgeCalculator {
      */
     public static boolean isChild(String birthdateStr) {
         boolean child = computeAge(birthdateStr) <= 18;
-        log.trace("isChild: birthdate='{}' -> {}", birthdateStr, child);
+        log.debug("isChild: birthdate='{}' -> {}", birthdateStr, child);
 
         return child;
     }
@@ -70,7 +70,7 @@ public class AgeCalculator {
      */
     public static boolean isAdult(String birthdateStr) {
         boolean adult = computeAge(birthdateStr) > 18;
-        log.trace("isAdult: birthdate='{}' -> {}", birthdateStr, adult);
+        log.debug("isAdult: birthdate='{}' -> {}", birthdateStr, adult);
 
         return adult;
     }

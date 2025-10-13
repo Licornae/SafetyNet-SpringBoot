@@ -32,10 +32,10 @@ public class PhoneAlertServiceImpl implements PhoneAlertService {
      */
     @Override
     public List<String> getPhonesByFirestation(String stationNumber) {
-        log.info("phoneAlert.getPhonesByFirestation called, station='{}'", stationNumber);
+        log.debug("phoneAlert.getPhonesByFirestation called, station='{}'", stationNumber);
 
         if (stationNumber == null || stationNumber.isBlank()) {
-            log.warn("phoneAlert: blank or null station parameter");
+            log.error("phoneAlert: blank or null station parameter");
             throw new IllegalArgumentException("firestation parameter is required");
         }
 
@@ -47,7 +47,7 @@ public class PhoneAlertServiceImpl implements PhoneAlertService {
                 .anyMatch(fireStation -> stationNumber.equals(fireStation.getStation()));
 
         if (!stationExists) {
-            log.info("Station {} not found", stationNumber);
+            log.error("Station {} not found", stationNumber);
             throw new StationNotFoundException("This station doesn't exist");
         }
 
@@ -58,7 +58,7 @@ public class PhoneAlertServiceImpl implements PhoneAlertService {
                 .collect(Collectors.toSet());
 
         if (coveredAddresses.isEmpty()) {
-            log.info("No addresses covered by the station {}", stationNumber);
+            log.error("No addresses covered by the station {}", stationNumber);
             return List.of();
         }
 
@@ -72,11 +72,9 @@ public class PhoneAlertServiceImpl implements PhoneAlertService {
             if (personDTO.getPhone() == null || personDTO.getPhone().isBlank()) continue;
             uniquePhones.add(personDTO.getPhone().trim());
         }
-
         log.debug("phoneAlert: returning {} phone(s) for station '{}'", uniquePhones.size(), stationNumber);
 
-        return uniquePhones.stream()
-                .toList();
+        return uniquePhones.stream().toList();
     }
 
 }

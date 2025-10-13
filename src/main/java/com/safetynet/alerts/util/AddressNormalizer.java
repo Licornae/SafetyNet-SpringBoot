@@ -37,9 +37,8 @@ public final class AddressNormalizer {
         }
 
         String normalized = trimmed.toLowerCase(Locale.ROOT);
-        if (log.isTraceEnabled()) {
-            log.trace("normalize: '{}' -> '{}'", input, normalized);
-        }
+        log.debug("normalize: '{}' -> '{}'", input, normalized);
+
 
         return normalized;
     }
@@ -55,8 +54,8 @@ public final class AddressNormalizer {
         String na = normalize(a);
         String nb = normalize(b);
         boolean equals = Objects.equals(na, nb);
+        log.debug("equalsNormalized: '{}' <-> '{}' -> {}", na, nb, equals);
 
-        log.trace("equalsNormalized: '{}' <-> '{}' -> {}", na, nb, equals);
         return equals;
     }
 }

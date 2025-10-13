@@ -32,11 +32,11 @@ public class FloodServiceImpl implements FloodService {
     public List<FloodHouseholdDTO> getHouseholdsByStations(List<String> stations) {
 
         if (stations == null || stations.isEmpty() || stations.stream().allMatch(station -> station == null || station.isBlank())) {
-            log.warn("flood: stations parameter is null/empty or contains only blank values");
+            log.error("flood: stations parameter is null/empty or contains only blank values");
             throw new IllegalArgumentException("stations must not be blank");
         }
 
-        log.info("flood.getHouseholdsByStations called with {} station(s): {}",stations.size(), stations);
+        log.debug("flood.getHouseholdsByStations called with {} station(s): {}",stations.size(), stations);
 
 
         DataContainer dataContainer = dataRepository.getDataContainer();
@@ -59,7 +59,7 @@ public class FloodServiceImpl implements FloodService {
         }
 
         if (coveredAddresses.isEmpty()) {
-            log.info("No addresses found for stations {}", stations);
+            log.error("No addresses found for stations {}", stations);
             throw new AddressNotFoundException("No households found for given stations");
         }
         log.debug("Covered addresses count: {} for stations {}", coveredAddresses.size(), stations);
@@ -81,7 +81,7 @@ public class FloodServiceImpl implements FloodService {
                 });
 
         if (personsByAddress.isEmpty()) {
-            log.info("No residents found at covered addresses {}", coveredAddresses);
+            log.error("No residents found at covered addresses {}", coveredAddresses);
             throw new AddressNotFoundException("No residents found for given stations");
         }
 
@@ -110,7 +110,7 @@ public class FloodServiceImpl implements FloodService {
             String station = addressToStation.get(address);
             households.add(new FloodHouseholdDTO(station, address, residents));
         }
-        log.info("flood: returning {} household group(s) for {} station(s)", households.size(), stations.size());
+        log.debug("flood: returning {} household group(s) for {} station(s)", households.size(), stations.size());
 
         return households;
     }

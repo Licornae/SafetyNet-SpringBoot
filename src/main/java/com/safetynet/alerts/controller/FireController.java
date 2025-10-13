@@ -38,7 +38,7 @@ public class FireController {
         log.info("GET /fire called with address='{}'", address);
 
         FireDTO result = fireService.getResidentsByAddress(address);
-        log.debug("FireDTO payload for address='{}': {} residents", address, result.getResidents().size());
+        log.info("FireDTO payload for address='{}': {} residents", address, result.getResidents().size());
 
         return ResponseEntity.ok(result);
     }

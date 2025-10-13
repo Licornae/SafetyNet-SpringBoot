@@ -33,10 +33,10 @@ public class FireStationQueryServiceImpl implements FireStationQueryService {
      */
     @Override
     public FirestationCoverageDTO getCoverageByStation(String stationNumber) {
-        log.info("getCoverageByStation called with stationNumber='{}'", stationNumber);
+        log.debug("getCoverageByStation called with stationNumber='{}'", stationNumber);
 
         if (stationNumber == null || stationNumber.isBlank()) {
-            log.warn("getCoverageByStation: blank stationNumber");
+            log.error("getCoverageByStation: blank stationNumber");
             throw new IllegalArgumentException("stationNumber is required");
         }
 
@@ -52,7 +52,7 @@ public class FireStationQueryServiceImpl implements FireStationQueryService {
                 .anyMatch(fireStation -> stationNumber.equals(fireStation.getStation()));
 
         if (!stationExists) {
-            log.warn("Station '{}' doesn't exist", stationNumber);
+            log.error("Station '{}' doesn't exist", stationNumber);
             throw new StationNotFoundException("Station " + stationNumber + " not found");
         }
 
@@ -63,7 +63,7 @@ public class FireStationQueryServiceImpl implements FireStationQueryService {
                 .collect(Collectors.toSet());
 
         if (coveredAddresses.isEmpty()) {
-            log.warn("No firestation mapping found for station {}", stationNumber);
+            log.error("No firestation mapping found for station {}", stationNumber);
             throw new AddressNotFoundException("No address found for station " + stationNumber);
         }
 
@@ -83,8 +83,7 @@ public class FireStationQueryServiceImpl implements FireStationQueryService {
 
             persons.add(personDTO);
         }
-
-        log.info("getCoverageByStation('{}'): persons={}, adults={}, children={}", stationNumber, persons.size(), adults, children);
+        log.debug("getCoverageByStation('{}'): persons={}, adults={}, children={}", stationNumber, persons.size(), adults, children);
 
         return new FirestationCoverageDTO(Integer.parseInt(stationNumber), persons, adults, children);
     }

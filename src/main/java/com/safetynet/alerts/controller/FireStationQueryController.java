@@ -30,7 +30,7 @@ public class FireStationQueryController {
         log.info("GET /firestation called with stationNumber='{}'", stationNumber);
 
         FirestationCoverageDTO result = queryService.getCoverageByStation(stationNumber);
-        log.debug("FirestationCoverageDTO payload for station='{}': {} person(s), {} adult(s), {} child(ren)",
+        log.info("FirestationCoverageDTO payload for station='{}': {} person(s), {} adult(s), {} child(ren)",
                 stationNumber, result.getPersons().size(), result.getAdults(), result.getChildren());
 
         return ResponseEntity.ok(result);
