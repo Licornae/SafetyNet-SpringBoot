@@ -40,6 +40,7 @@ public class FloodController {
 
         List<String> stations = Arrays.stream(stationsParam.split(","))
                 .map(String::trim)
+                .filter(s -> !s.isEmpty())
                 .toList();
 
         if (stations.isEmpty()) {

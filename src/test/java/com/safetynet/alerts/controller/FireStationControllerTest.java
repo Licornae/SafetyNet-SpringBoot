@@ -148,6 +148,20 @@ public class FireStationControllerTest {
     }
 
     @Test
+    public void deleteByStation_DryRun_Returns200_WithReport() throws Exception {
+        when(fireStationService.countByStation(eq("3"))).thenReturn(5);
+
+        mockMvc.perform(delete("/firestation")
+                        .param("station", "3")
+                        .param("dryRun", "true"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.station").value("3"))
+                .andExpect(jsonPath("$.count").value(5));
+    }
+
+
+    @Test
     public void deleteFireStation_AddressNotFound_Returns404() throws Exception {
         String address = "unknown";
 

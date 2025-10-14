@@ -13,7 +13,6 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -175,20 +174,16 @@ public class PersonControllerTest {
     }
 
     @Test
-    public void testDeletePerson_NotFound() throws Exception {
-        // Arrange
+    public void testDeletePerson_NotFound_Returns404() throws Exception {
         String firstName = "Jane";
         String lastName = "Unknown";
 
-        doThrow(new PersonNotFoundException("Person not found")).when(personService).deletePerson(firstName, lastName);
+        when(personService.deletePerson(firstName, lastName)).thenReturn(false);
 
-        // Act & Assert
         mockMvc.perform(delete("/person/{firstName}/{lastName}", firstName, lastName))
                 .andExpect(status().isNotFound())
-                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.message").value("Person not found"))
-                .andExpect(jsonPath("$.path").value("/person/Jane/Unknown"))
-                .andExpect(jsonPath("$.timestamp").exists());
+                .andExpect(content().string(""));
     }
+
 }
 

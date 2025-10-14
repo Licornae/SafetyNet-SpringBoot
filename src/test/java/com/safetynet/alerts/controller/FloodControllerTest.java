@@ -26,20 +26,20 @@ public class FloodControllerTest {
     FloodService floodService;
 
     @Test
-    void getHouseholdsByStations_ok() throws Exception {
+    public void getHouseholdsByStations_Ok() throws Exception {
         List<PersonMedicalInfoDTO> residentsAt1509CulverSt = List.of(
-                new PersonMedicalInfoDTO("John","Boyd","841-874-6512",41,
-                        List.of("aznol:350mg","hydrapermazol:100mg"),
+                new PersonMedicalInfoDTO("John", "Boyd", "841-874-6512", 41,
+                        List.of("aznol:350mg", "hydrapermazol:100mg"),
                         List.of("nillacilan")),
-                new PersonMedicalInfoDTO("Jacob","Boyd","841-874-6513",36,
-                        List.of("pharmacol:5000mg","terazine:10mg"),
+                new PersonMedicalInfoDTO("Jacob", "Boyd", "841-874-6513", 36,
+                        List.of("pharmacol:5000mg", "terazine:10mg"),
                         List.of())
         );
         List<FloodHouseholdDTO> floodHouseholdDTO = List.of(
-                new FloodHouseholdDTO("3","1509 Culver St", residentsAt1509CulverSt)
+                new FloodHouseholdDTO("3", "1509 Culver St", residentsAt1509CulverSt)
         );
 
-        when(floodService.getHouseholdsByStations(List.of("1","3"))).thenReturn(floodHouseholdDTO);
+        when(floodService.getHouseholdsByStations(List.of("1", "3"))).thenReturn(floodHouseholdDTO);
 
         mockMvc.perform(get("/flood/stations")
                         .param("stations", "1,3")
@@ -51,8 +51,18 @@ public class FloodControllerTest {
     }
 
     @Test
-    void getHouseholdsByStations_blank_returns400() throws Exception {
+    public void getHouseholdsByStations_Blank_Returns400() throws Exception {
         mockMvc.perform(get("/flood/stations").param("stations", " "))
                 .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void getHouseholdsByStations_OnlyCommas_Returns400() throws Exception {
+        mockMvc.perform(get("/flood/stations").param("stations", ", ,"))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.message").value("stations must contain at least one valid station number"))
+                .andExpect(jsonPath("$.path").value("/flood/stations"))
+                .andExpect(jsonPath("$.timestamp").exists());
     }
 }

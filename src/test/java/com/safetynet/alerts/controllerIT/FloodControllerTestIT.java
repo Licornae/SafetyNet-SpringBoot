@@ -64,6 +64,7 @@ public class FloodControllerTestIT {
     public void onlyCommas_ThrowsIllegalArgumentException() {
         assertThatThrownBy(() -> controller.getHouseholdsByStations(", ,"))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("stations must not be blank");
+                .hasMessageContaining("stations must contain at least one valid station number");
     }
+
 }

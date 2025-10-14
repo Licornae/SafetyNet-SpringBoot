@@ -41,6 +41,7 @@ public class MedicalInfoServiceImplUnitTest {
         DataContainer dataContainer = new DataContainer(); dataContainer.setMedicalrecords(medicalRecords); return dataContainer;
     }
 
+    //FIND MEDICAL RECORD
     @Test
     public void findMedicalRecordByName_Match_ReturnsRecord() {
         MedicalRecord john = medicalRecord("John", "Doe");
@@ -55,6 +56,28 @@ public class MedicalInfoServiceImplUnitTest {
     }
 
     @Test
+    public void findMedicalRecordByName_NoMatch_ReturnsNull() {
+        MedicalRecord other = medicalRecord("Alice", "Smith");
+
+        MedicalRecord incomplete = mock(MedicalRecord.class);
+        when(incomplete.getFirstName()).thenReturn(null);
+
+        java.util.List<MedicalRecord> records = new java.util.ArrayList<>();
+        records.add(null);
+        records.add(incomplete);
+        records.add(other);
+
+        when(dataRepository.getDataContainer()).thenReturn(dataContainer(records));
+
+        MedicalRecord found = service.findMedicalRecordByName("John", "Doe");
+
+        assertNull(found);
+        verify(dataRepository).getDataContainer();
+    }
+
+
+
+    @Test
     public void findMedicalRecordByName_NullInputs_ReturnsNull() {
         assertNull(service.findMedicalRecordByName(null, "Doe"));
         assertNull(service.findMedicalRecordByName("John", null));
@@ -62,6 +85,7 @@ public class MedicalInfoServiceImplUnitTest {
         verifyNoInteractions(dataRepository);
     }
 
+    //GET AGE
     @Test
     public void getAgeFor_ExistingPerson_ValidBirthdate_ReturnsAge() {
         String birth = LocalDate.now().minusYears(25).format(FORMAT);
@@ -84,13 +108,14 @@ public class MedicalInfoServiceImplUnitTest {
         assertNull(service.getAgeFor(person("John", "Doe")));
     }
 
+    //GET MEDICATIONS
     @Test
     public void getMedicationsFor_ExistingPerson_ReturnsList() {
-        MedicalRecord john = medicalRecord("John", "Doe");
+        MedicalRecord john = medicalRecord("John", "Boyd");
         when(john.getMedications()).thenReturn(of("aznol:200mg", "hydrapermazol:100mg"));
         when(dataRepository.getDataContainer()).thenReturn(dataContainer(of(john)));
 
-        List<String> meds = service.getMedicationsFor(person("John", "Doe"));
+        List<String> meds = service.getMedicationsFor(person("John", "Boyd"));
 
         assertNotNull(meds);
         assertEquals(2, meds.size());
@@ -98,15 +123,40 @@ public class MedicalInfoServiceImplUnitTest {
     }
 
     @Test
+    public void getMedicationsFor_MedicationsNull_ReturnsEmptyList() {
+        MedicalRecord john = medicalRecord("John", "Boyd");
+        when(john.getMedications()).thenReturn(null);
+        when(dataRepository.getDataContainer()).thenReturn(dataContainer(of(john)));
+
+        List<String> meds = service.getMedicationsFor(person("John", "Boyd"));
+
+        assertNotNull(meds);
+        assertTrue(meds.isEmpty());
+    }
+
+    //GET ALLERGIES
+    @Test
     public void getAllergiesFor_ExistingPerson_ReturnsList() {
-        MedicalRecord john = medicalRecord("John", "Doe");
+        MedicalRecord john = medicalRecord("John", "Boyd");
         when(john.getAllergies()).thenReturn(of("peanut"));
         when(dataRepository.getDataContainer()).thenReturn(dataContainer(of(john)));
 
-        List<String> allergies = service.getAllergiesFor(person("John", "Doe"));
+        List<String> allergies = service.getAllergiesFor(person("John", "Boyd"));
 
         assertNotNull(allergies);
         assertEquals(1, allergies.size());
         assertTrue(allergies.contains("peanut"));
+    }
+
+    @Test
+    public void getAllergiesFor_AllergiesNull_ReturnsEmptyList() {
+        MedicalRecord john = medicalRecord("John", "Boyd");
+        when(john.getAllergies()).thenReturn(null);
+        when(dataRepository.getDataContainer()).thenReturn(dataContainer(of(john)));
+
+        List<String> allergies = service.getAllergiesFor(person("John", "Boyd"));
+
+        assertNotNull(allergies);
+        assertTrue(allergies.isEmpty());
     }
 }

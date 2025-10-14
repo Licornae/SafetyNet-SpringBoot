@@ -1,6 +1,7 @@
 package com.safetynet.alerts.service;
 
 import com.safetynet.alerts.exception.AddressNotFoundException;
+import com.safetynet.alerts.exception.DuplicateFireStationException;
 import com.safetynet.alerts.model.DataContainer;
 import com.safetynet.alerts.model.FireStation;
 import com.safetynet.alerts.repository.DataRepository;
@@ -29,7 +30,6 @@ public class FireStationServiceImplUnitTest {
     FireStationServiceImpl service;
 
     private DataContainer container;
-    private List<FireStation> firestations;
 
     private static final String CULVER = "1509 Culver St";
     private static final String GERSHWIN = "644 Gershwin Cir";
@@ -37,7 +37,7 @@ public class FireStationServiceImplUnitTest {
     @BeforeEach
     public void setUp() {
 
-        firestations = new ArrayList<>(of(
+        List<FireStation> firestations = new ArrayList<>(of(
                 new FireStation(CULVER, "3"),
                 new FireStation(GERSHWIN, "1")
         ));
@@ -75,6 +75,20 @@ public class FireStationServiceImplUnitTest {
                 .anyMatch(fireStation -> "29 15th St".equals(fireStation.getAddress()) && "2".equals(fireStation.getStation())));
     }
 
+    @Test
+    public void addFireStation_DuplicateAddress_ThrowsDuplicateFireStationException() {
+        int sizeBefore = container.getFirestations().size();
+
+        DuplicateFireStationException ex = assertThrows(DuplicateFireStationException.class,
+                () -> service.addFireStation(new FireStation(CULVER, "9")));
+        assertTrue(ex.getMessage().contains(CULVER));
+
+        assertEquals(sizeBefore, container.getFirestations().size());
+
+        long culverCount = container.getFirestations().stream().filter(fs -> CULVER.equals(fs.getAddress())).count();
+        assertEquals(1, culverCount);
+    }
+
     //UPDATE
     @Test
     public void updateStationAddress_Existing_Updates() {
@@ -90,7 +104,7 @@ public class FireStationServiceImplUnitTest {
                 () -> service.updateStationAddress("Unknown", new FireStation("Unknown", "9")));
     }
 
-    //DELETE
+    //DELETE BY ADDRESS
     @Test
     public void deleteFireStationByAddress_Existing_Removes() {
         assertTrue(service.deleteFireStationByAddress(CULVER));
@@ -98,9 +112,25 @@ public class FireStationServiceImplUnitTest {
     }
 
     @Test
+    public void deleteFireStationByAddress_Unknown_ThrowsAddressNotFound() {
+        int sizeBefore = container.getFirestations().size();
+
+        assertThrows(AddressNotFoundException.class,
+                () -> service.deleteFireStationByAddress("Unknown"));
+
+        assertEquals(sizeBefore, container.getFirestations().size());
+        assertNotNull(service.getFireStation(CULVER));
+        assertNotNull(service.getFireStation(GERSHWIN));
+    }
+
+
+    //DELETE BY STATION
+    @Test
     public void deleteFireStationsByStation_Existing_ReturnsTrue_RemovesAllMatches() {
         assertTrue(service.deleteFireStationsByStation("3"));
         assertEquals(0, service.countByStation("3"));
         assertNull(service.getFireStation(CULVER));
     }
+
+
 }

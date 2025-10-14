@@ -17,7 +17,6 @@ import java.util.List;
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doThrow;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -159,6 +158,31 @@ public class MedicalRecordControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
+    @Test
+    public void testUpdateMedicalRecord_PathBodyMismatch_ReturnsBadRequest() throws Exception {
+        String pathFirst = "John";
+        String pathLast = "Boyd";
+
+        String mismatchedPayload = """
+        {
+          "firstName": "John",
+          "lastName": "Different",
+          "birthdate": "01/01/1990",
+          "medications": [],
+          "allergies": []
+        }
+        """;
+
+        mockMvc.perform(put("/medicalRecord/{firstName}/{lastName}", pathFirst, pathLast)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mismatchedPayload))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.message").value("Path {firstName,lastName} must match body."))
+                .andExpect(jsonPath("$.path").value("/medicalRecord/John/Boyd"))
+                .andExpect(jsonPath("$.timestamp").exists());
+    }
+
     // DELETE
     @Test
     public void testDeleteMedicalRecord_Successful() throws Exception {
@@ -173,20 +197,13 @@ public class MedicalRecordControllerTest {
     }
 
     @Test
-    public void testDeleteMedicalRecord_NotFound() throws Exception {
-        // Arrange
+    public void testDeleteMedicalRecord_NotFound_Returns404_NoBody() throws Exception {
         String firstName = "Jane";
         String lastName = "Unknown";
+        when(medicalRecordService.deleteMedicalRecord(firstName, lastName)).thenReturn(false);
 
-        doThrow(new MedicalRecordNotFoundException("Medical record not found"))
-                .when(medicalRecordService).deleteMedicalRecord(firstName, lastName);
-
-        // Act & Assert
         mockMvc.perform(delete("/medicalRecord/{firstName}/{lastName}", firstName, lastName))
                 .andExpect(status().isNotFound())
-                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.message").value("Medical record not found"))
-                .andExpect(jsonPath("$.path").value("/medicalRecord/Jane/Unknown"))
-                .andExpect(jsonPath("$.timestamp").exists());
+                .andExpect(content().string(""));
     }
 }

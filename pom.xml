@@ -28,6 +28,8 @@
 	</scm>
 	<properties>
 		<java.version>17</java.version>
+		<jacoco.version>0.8.14</jacoco.version>
+		<surefireArgLine></surefireArgLine>
 	</properties>
 
 	<dependencies>
@@ -136,7 +138,65 @@
 					</excludes>
 				</configuration>
 			</plugin>
+
+
+
+
+
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>${jacoco.version}</version>
+
+				<executions>
+					<!-- 1) Branche l’agent avant les tests -->
+					<execution>
+						<id>prepare-agent</id>
+						<goals><goal>prepare-agent</goal></goals>
+						<!-- (facultatif) exclure aussi de l’instrumentation -->
+						<configuration>
+							<excludes>
+								<exclude>com/safetynet/alerts/dto/**</exclude>
+								<exclude>com/safetynet/alerts/model/**</exclude>
+								<exclude>**/*Application.class</exclude>
+							</excludes>
+						</configuration>
+					</execution>
+
+					<!-- 2) Génère le rapport et EXCLUT ces packages du rapport -->
+					<execution>
+						<id>report</id>
+						<phase>verify</phase>
+						<goals><goal>report</goal></goals>
+						<configuration>
+							<excludes>
+								<exclude>com/safetynet/alerts/dto/**</exclude>
+								<exclude>com/safetynet/alerts/model/**</exclude>
+								<exclude>com/safetynet/alerts/exception/**</exclude>
+								<exclude>**/*Application.class</exclude>
+							</excludes>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>3.2.5</version>
+				<configuration>
+					<!--suppress UnresolvedMavenProperty -->
+					<argLine>${argLine}</argLine>
+				</configuration>
+			</plugin>
+			
+
 		</plugins>
 	</build>
-
+    <repositories>
+        <repository>
+            <id>jacoco</id>
+            <url>https://repo.maven.apache.org/maven2</url>
+        </repository>
+    </repositories>
 </project>
