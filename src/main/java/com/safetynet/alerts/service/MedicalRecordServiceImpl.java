@@ -74,6 +74,7 @@ public class MedicalRecordServiceImpl implements MedicalRecordService {
         listMR.add(medicalRecord);
         log.debug("addMedicalRecord: created record for '{} {}'", medicalRecord.getFirstName(), medicalRecord.getLastName());
 
+        dataRepository.saveData();
         return medicalRecord;
     }
 
@@ -99,6 +100,7 @@ public class MedicalRecordServiceImpl implements MedicalRecordService {
                 medicalRecord.setAllergies(updatedMedicalRecord.getAllergies());
                 log.debug("updateMedicalRecord: updated record for '{} {}'", firstName, lastName);
 
+                dataRepository.saveData();
                 return medicalRecord;
             }
         }
@@ -133,6 +135,7 @@ public class MedicalRecordServiceImpl implements MedicalRecordService {
             log.error("deleteMedicalRecord: no record found for '{} {}'", firstName, lastName);
         }
 
+        dataRepository.saveData();
         return mRRemoved;
     }
 

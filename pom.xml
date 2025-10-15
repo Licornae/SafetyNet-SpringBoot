@@ -37,7 +37,7 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-actuator</artifactId>
 			<exclusions>
-				<!-- EXCLURE Logback de TOUTES les dépendances Spring Boot -->
+				<!-- EXCLURE Logback -->
 				<exclusion>
 					<groupId>org.springframework.boot</groupId>
 					<artifactId>spring-boot-starter-logging</artifactId>
@@ -177,6 +177,9 @@
 				<configuration>
 					<!--suppress UnresolvedMavenProperty -->
 					<argLine>${argLine}</argLine>
+					<systemPropertyVariables>
+						<spring.profiles.active>test</spring.profiles.active>
+					</systemPropertyVariables>
 				</configuration>
 			</plugin>
 

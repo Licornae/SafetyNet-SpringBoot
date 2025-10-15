@@ -69,6 +69,7 @@ public class PersonServiceImpl implements PersonService {
         dataRepository.getDataContainer().getPersons().add(person);
         log.debug("addPerson: created record for: {} {}", person.getFirstName(), person.getLastName());
 
+        dataRepository.saveData();
         return person;
     }
 
@@ -94,6 +95,8 @@ public class PersonServiceImpl implements PersonService {
                 person.setZip(updatedPerson.getZip());
                 person.setPhone(updatedPerson.getPhone());
                 person.setEmail(updatedPerson.getEmail());
+
+                dataRepository.saveData();
                 return person;
             }
         }
@@ -128,6 +131,7 @@ public class PersonServiceImpl implements PersonService {
             log.error("deletePerson: no record found for '{} {}'", firstName, lastName);
         }
 
+        dataRepository.saveData();
         return personRemoved;
     }
 }

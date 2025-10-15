@@ -73,6 +73,7 @@ public class FireStationServiceImpl implements FireStationService {
         list.add(fireStation);
         log.debug("addFireStation: created mapping address='{}' -> station='{}'", fireStation.getAddress(), fireStation.getStation());
 
+        dataRepository.saveData();
         return fireStation;
     }
 
@@ -97,6 +98,7 @@ public class FireStationServiceImpl implements FireStationService {
                 fireStation.setStation(updatedFireStationAddress.getStation());
                 log.debug("updateStationAddress: address='{}' station updated '{}' -> '{}'", address, oldStation, fireStation.getStation());
 
+                dataRepository.saveData();
                 return fireStation;
             }
         }
@@ -126,6 +128,7 @@ public class FireStationServiceImpl implements FireStationService {
         }
         log.debug("deleteFireStationByAddress: deleted mapping for address='{}'", address);
 
+        dataRepository.saveData();
         return true;
     }
 
@@ -175,6 +178,7 @@ public class FireStationServiceImpl implements FireStationService {
         }
         log.debug("deleteFireStationsByStation: deleted {} mapping(s) for station='{}'", removed, station);
 
+        dataRepository.saveData();
         return true;
     }
 }
