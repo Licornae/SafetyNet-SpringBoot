@@ -29,7 +29,7 @@ public class FloodServiceImplUnitTest {
     DataRepository dataRepository;
 
     @Mock
-    MedicalInfoService medicalInfoService;
+    PersonMedicalInfo personMedicalInfo;
 
     @InjectMocks
     FloodServiceImpl floodService;
@@ -66,22 +66,22 @@ public class FloodServiceImplUnitTest {
     @Test
     public void getHouseholdsByStations_station1And3_returnsBothAddresses() {
 
-        when(medicalInfoService.getAgeFor(john)).thenReturn(41);
-        when(medicalInfoService.getAgeFor(jacob)).thenReturn(36);
-        when(medicalInfoService.getAgeFor(tenley)).thenReturn(13);
-        when(medicalInfoService.getAgeFor(peter)).thenReturn(20);
+        when(personMedicalInfo.getAgeFor(john)).thenReturn(41);
+        when(personMedicalInfo.getAgeFor(jacob)).thenReturn(36);
+        when(personMedicalInfo.getAgeFor(tenley)).thenReturn(13);
+        when(personMedicalInfo.getAgeFor(peter)).thenReturn(20);
 
-        when(medicalInfoService.getMedicationsFor(john)).thenReturn(List.of("aznol:350mg","hydrapermazol:100mg"));
-        when(medicalInfoService.getAllergiesFor(john)).thenReturn(List.of("nillacilan"));
+        when(personMedicalInfo.getMedicationsFor(john)).thenReturn(List.of("aznol:350mg","hydrapermazol:100mg"));
+        when(personMedicalInfo.getAllergiesFor(john)).thenReturn(List.of("nillacilan"));
 
-        when(medicalInfoService.getMedicationsFor(jacob)).thenReturn(List.of("pharmacol:5000mg","terazine:10mg"));
-        when(medicalInfoService.getAllergiesFor(jacob)).thenReturn(List.of());
+        when(personMedicalInfo.getMedicationsFor(jacob)).thenReturn(List.of("pharmacol:5000mg","terazine:10mg"));
+        when(personMedicalInfo.getAllergiesFor(jacob)).thenReturn(List.of());
 
-        when(medicalInfoService.getMedicationsFor(tenley)).thenReturn(List.of());
-        when(medicalInfoService.getAllergiesFor(tenley)).thenReturn(List.of("peanut"));
+        when(personMedicalInfo.getMedicationsFor(tenley)).thenReturn(List.of());
+        when(personMedicalInfo.getAllergiesFor(tenley)).thenReturn(List.of("peanut"));
 
-        when(medicalInfoService.getMedicationsFor(peter)).thenReturn(List.of());
-        when(medicalInfoService.getAllergiesFor(peter)).thenReturn(List.of());
+        when(personMedicalInfo.getMedicationsFor(peter)).thenReturn(List.of());
+        when(personMedicalInfo.getAllergiesFor(peter)).thenReturn(List.of());
 
         List<FloodHouseholdDTO> households = floodService.getHouseholdsByStations(of("1", "3"));
         assertNotNull(households);

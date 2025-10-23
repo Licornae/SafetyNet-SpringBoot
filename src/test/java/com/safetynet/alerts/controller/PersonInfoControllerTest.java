@@ -50,7 +50,7 @@ public class PersonInfoControllerTest {
     }
 
     @Test
-    public void getPersonInfo_UnknownLastName_Returns200EmptyList() throws Exception {
+    public void getPersonInfo_UnknownLastName_Returns404NotFound() throws Exception {
         when(personInfoService.getPersonInfoByLastName("Unknown")).thenThrow(new PersonNotFoundException("Person not found"));
 
         mockMvc.perform(get("/personInfolastName").param("lastName", "Unknown"))

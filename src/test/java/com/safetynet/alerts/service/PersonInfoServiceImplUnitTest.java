@@ -31,7 +31,7 @@ public class PersonInfoServiceImplUnitTest {
     DataRepository dataRepository;
 
     @Mock
-    MedicalInfoService medicalInfoService;
+    PersonMedicalInfo personMedicalInfo;
 
     @InjectMocks
     PersonInfoServiceImpl service;
@@ -68,18 +68,18 @@ public class PersonInfoServiceImplUnitTest {
         Person jacob  = container.getPersons().get(1);
         Person tenley = container.getPersons().get(2);
 
-        when(medicalInfoService.getAgeFor(john)).thenReturn(40);
-        when(medicalInfoService.getAgeFor(jacob)).thenReturn(36);
-        when(medicalInfoService.getAgeFor(tenley)).thenReturn(12);
+        when(personMedicalInfo.getAgeFor(john)).thenReturn(40);
+        when(personMedicalInfo.getAgeFor(jacob)).thenReturn(36);
+        when(personMedicalInfo.getAgeFor(tenley)).thenReturn(12);
 
-        when(medicalInfoService.getMedicationsFor(john)).thenReturn(of("aznol:200mg"));
-        when(medicalInfoService.getAllergiesFor(john)).thenReturn(of("nillacilan"));
+        when(personMedicalInfo.getMedicationsFor(john)).thenReturn(of("aznol:200mg"));
+        when(personMedicalInfo.getAllergiesFor(john)).thenReturn(of("nillacilan"));
 
-        when(medicalInfoService.getMedicationsFor(jacob)).thenReturn(of("pharmacol:5000mg"));
-        when(medicalInfoService.getAllergiesFor(jacob)).thenReturn(of());
+        when(personMedicalInfo.getMedicationsFor(jacob)).thenReturn(of("pharmacol:5000mg"));
+        when(personMedicalInfo.getAllergiesFor(jacob)).thenReturn(of());
 
-        when(medicalInfoService.getMedicationsFor(tenley)).thenReturn(of("ibupurin:200mg"));
-        when(medicalInfoService.getAllergiesFor(tenley)).thenReturn(of("peanut"));
+        when(personMedicalInfo.getMedicationsFor(tenley)).thenReturn(of("ibupurin:200mg"));
+        when(personMedicalInfo.getAllergiesFor(tenley)).thenReturn(of("peanut"));
 
         List<PersonInfoDTO> result = service.getPersonInfoByLastName("Boyd");
 

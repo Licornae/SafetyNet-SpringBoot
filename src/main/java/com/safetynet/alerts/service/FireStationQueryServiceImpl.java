@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 public class FireStationQueryServiceImpl implements FireStationQueryService {
 
     private final DataRepository dataRepository;
-    private final PeopleWithAgeService peopleWithAgeService;
+    private final PersonMedicalInfo personMedicalInfo;
 
     /**
      * {@inheritDoc}
@@ -67,7 +67,7 @@ public class FireStationQueryServiceImpl implements FireStationQueryService {
             throw new AddressNotFoundException("No address found for station " + stationNumber);
         }
 
-        List<PersonDTO> allPeopleWithAge = peopleWithAgeService.listAll();
+        List<PersonDTO> allPeopleWithAge = personMedicalInfo.listAllPeopleWithAge();
 
         //Filter persons by covered addresses and count adults/children
         List<PersonDTO> persons = new ArrayList<>();

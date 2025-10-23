@@ -26,7 +26,7 @@ public class PhoneAlertServiceImplUnitTest {
     DataRepository dataRepository;
 
     @Mock
-    PeopleWithAgeService peopleWithAgeService;
+    PersonMedicalInfo personMedicalInfo;
 
     @InjectMocks
     PhoneAlertServiceImpl service;
@@ -58,7 +58,7 @@ public class PhoneAlertServiceImplUnitTest {
                 new PersonDTO("Tessa", "Carman", 13, "834 Binoc Ave", "841-874-7777"),
                 new PersonDTO("Peter", "Duncan", 24, "644 Gershwin Cir", "841-874-7458")
         );
-        when(peopleWithAgeService.listAll()).thenReturn(people);
+        when(personMedicalInfo.listAllPeopleWithAge()).thenReturn(people);
 
         List<String> phones = service.getPhonesByFirestation("3");
 

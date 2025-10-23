@@ -67,7 +67,7 @@ public class ChildAlertControllerTest {
  }
 
     @Test
-    void existing_address_with_only_adults_returns_empty_array() throws Exception {
+    public void existing_address_with_only_adults_returns_empty_array() throws Exception {
         when(childAlertService.getChildrenByAddress("644 Gershwin Cir"))
                 .thenReturn(List.of());
 
@@ -77,7 +77,7 @@ public class ChildAlertControllerTest {
     }
 
     @Test
-    void unknown_Address_Returns404() throws Exception {
+    public void unknown_Address_Returns404() throws Exception {
         when(childAlertService.getChildrenByAddress("Unknown"))
                 .thenThrow(new AddressNotFoundException("Address not found"));
 

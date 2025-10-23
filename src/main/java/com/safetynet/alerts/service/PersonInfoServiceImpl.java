@@ -25,7 +25,7 @@ public class PersonInfoServiceImpl implements PersonInfoService {
 
     private final DataRepository dataRepository;
 
-    private final MedicalInfoService medicalInfoService;
+    private final PersonMedicalInfo personMedicalInfo;
 
     /**
      * {@inheritDoc}
@@ -59,14 +59,14 @@ public class PersonInfoServiceImpl implements PersonInfoService {
     }
 
     private PersonInfoDTO toDto(Person person) {
-        Integer age = medicalInfoService.getAgeFor(person);
+        Integer age = personMedicalInfo.getAgeFor(person);
 
-        List<String> medications = medicalInfoService.getMedicationsFor(person);
+        List<String> medications = personMedicalInfo.getMedicationsFor(person);
         if (medications == null) {
             medications = Collections.emptyList();
         }
 
-        List<String> allergies = medicalInfoService.getAllergiesFor(person);
+        List<String> allergies = personMedicalInfo.getAllergiesFor(person);
         if (allergies == null) {
             allergies = Collections.emptyList();
         }

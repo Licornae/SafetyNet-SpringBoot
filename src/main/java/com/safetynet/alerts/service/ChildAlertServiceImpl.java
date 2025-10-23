@@ -25,7 +25,7 @@ import static com.safetynet.alerts.util.AddressNormalizer.equalsNormalized;
 @RequiredArgsConstructor
 public class ChildAlertServiceImpl implements ChildAlertService {
 
-    private final PeopleWithAgeService peopleWithAgeService;
+    private final PersonMedicalInfo personMedicalInfo;
     private final DataRepository dataRepository;
 
     /**
@@ -41,7 +41,7 @@ public class ChildAlertServiceImpl implements ChildAlertService {
             throw new IllegalArgumentException("address is required");
         }
 
-        boolean addressExists = peopleWithAgeService.listAll().stream()
+        boolean addressExists = personMedicalInfo.listAllPeopleWithAge().stream()
                 .filter(Objects::nonNull)
                 .map(PersonDTO::getAddress)
                 .filter(Objects::nonNull)
@@ -53,7 +53,7 @@ public class ChildAlertServiceImpl implements ChildAlertService {
         }
 
         // All residents living at the given address
-        List<PersonDTO> residents = peopleWithAgeService.listAll().stream()
+        List<PersonDTO> residents = personMedicalInfo.listAllPeopleWithAge().stream()
                 .filter(Objects::nonNull)
                 .filter(personDTO -> equalsNormalized(personDTO.getAddress(), normAddress))
                 .toList();

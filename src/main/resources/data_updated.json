@@ -375,5 +375,11 @@
     "birthdate" : "08/06/1945",
     "medications" : [ "tradoxidine:400mg" ],
     "allergies" : [ ]
+  }, {
+    "firstName" : "Patrick",
+    "lastName" : "Boyd",
+    "birthdate" : "09/06/1964",
+    "medications" : [ "aznol:200mg", "hydrapermazol:100mg", "alprazolam" ],
+    "allergies" : [ "nillacilan", "cat" ]
   } ]
 }

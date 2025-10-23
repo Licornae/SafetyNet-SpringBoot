@@ -23,7 +23,7 @@ import java.util.*;
 public class FloodServiceImpl implements FloodService {
 
     private final DataRepository dataRepository;
-    private final MedicalInfoService medicalInfoService;
+    private final PersonMedicalInfo personMedicalInfo;
 
     /**
      * {@inheritDoc}
@@ -93,9 +93,9 @@ public class FloodServiceImpl implements FloodService {
 
             List<PersonMedicalInfoDTO> residents = new ArrayList<>(persons.size());
             for (Person person : persons) {
-                Integer age = medicalInfoService.getAgeFor(person);
-                List<String> medications = medicalInfoService.getMedicationsFor(person);
-                List<String> allergies = medicalInfoService.getAllergiesFor(person);
+                Integer age = personMedicalInfo.getAgeFor(person);
+                List<String> medications = personMedicalInfo.getMedicationsFor(person);
+                List<String> allergies = personMedicalInfo.getAllergiesFor(person);
 
                 residents.add(new PersonMedicalInfoDTO(
                         person.getFirstName(),

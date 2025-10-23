@@ -25,7 +25,7 @@ import com.safetynet.alerts.dto.PersonDTO;
 public class PhoneAlertServiceImpl implements PhoneAlertService {
 
     private final DataRepository dataRepository;
-    private final PeopleWithAgeService peopleWithAgeService;
+    private final PersonMedicalInfo personMedicalInfo;
 
     /**
      * {@inheritDoc}
@@ -63,7 +63,7 @@ public class PhoneAlertServiceImpl implements PhoneAlertService {
         }
 
         //Distinct phone numbers at covered addresses
-        List<PersonDTO> allPeople = peopleWithAgeService.listAll();
+        List<PersonDTO> allPeople = personMedicalInfo.listAllPeopleWithAge();
         Set<String> uniquePhones = new HashSet<>();
 
         for (PersonDTO personDTO : allPeople) {

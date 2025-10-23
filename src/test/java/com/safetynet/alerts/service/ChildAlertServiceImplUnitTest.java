@@ -19,7 +19,7 @@ import static org.mockito.Mockito.when;
 public class ChildAlertServiceImplUnitTest {
 
     @Mock
-    PeopleWithAgeService peopleWithAgeService;
+    PersonMedicalInfo personMedicalInfo;
 
     @InjectMocks
     ChildAlertServiceImpl service;
@@ -40,7 +40,7 @@ public class ChildAlertServiceImplUnitTest {
 
     @Test
     public void getChildrenByAddress_returnsTenleyAndRoger_withFamilyMembers() {
-        when(peopleWithAgeService.listAll()).thenReturn(dataset());
+        when(personMedicalInfo.listAllPeopleWithAge()).thenReturn(dataset());
 
         List<ChildAlertDTO> children = service.getChildrenByAddress("1509 Culver St");
 
@@ -75,7 +75,7 @@ public class ChildAlertServiceImplUnitTest {
 
     @Test
     public void getChildrenByAddress_ExistingAddressOnlyAdults_ReturnsEmptyList() {
-        when(peopleWithAgeService.listAll()).thenReturn(dataset());
+        when(personMedicalInfo.listAllPeopleWithAge()).thenReturn(dataset());
 
         List<ChildAlertDTO> children = service.getChildrenByAddress("644 Gershwin Cir");
         assertNotNull(children, "Result should not be null");

@@ -28,7 +28,7 @@ public class FireServiceImplUnitTest {
     DataRepository dataRepository;
 
     @Mock
-    MedicalInfoService medicalInfoService;
+    PersonMedicalInfo personMedicalInfo;
 
     @InjectMocks
     FireServiceImpl service;
@@ -38,8 +38,6 @@ public class FireServiceImplUnitTest {
     private Person tenley;
     private Person roger;
     private Person felicia;
-
-    private DataContainer container;
 
     @BeforeEach
     public void setup() {
@@ -57,7 +55,7 @@ public class FireServiceImplUnitTest {
                 new FireStation("644 Gershwin Cir", "1")
         ));
 
-        container = new DataContainer();
+        DataContainer container = new DataContainer();
         container.setPersons(new ArrayList<>(of(john, jacob, tenley, roger, felicia, peter)));
         container.setFirestations(stations);
         container.setMedicalrecords(null);
@@ -67,23 +65,23 @@ public class FireServiceImplUnitTest {
     @Test
     public void getResidentsByAddress_ok_returnsStationAndResidentsWithMedicalInfo() {
 
-        when(medicalInfoService.getAgeFor(john)).thenReturn(41);
-        when(medicalInfoService.getAgeFor(jacob)).thenReturn(36);
-        when(medicalInfoService.getAgeFor(tenley)).thenReturn(13);
-        when(medicalInfoService.getAgeFor(roger)).thenReturn(8);
-        when(medicalInfoService.getAgeFor(felicia)).thenReturn(39);
+        when(personMedicalInfo.getAgeFor(john)).thenReturn(41);
+        when(personMedicalInfo.getAgeFor(jacob)).thenReturn(36);
+        when(personMedicalInfo.getAgeFor(tenley)).thenReturn(13);
+        when(personMedicalInfo.getAgeFor(roger)).thenReturn(8);
+        when(personMedicalInfo.getAgeFor(felicia)).thenReturn(39);
 
-        when(medicalInfoService.getMedicationsFor(john)).thenReturn(of("aznol:350mg", "hydrapermazol:100mg"));
-        when(medicalInfoService.getMedicationsFor(jacob)).thenReturn(of("pharmacol:5000mg", "terazine:10mg", "noznazol:250mg"));
-        when(medicalInfoService.getMedicationsFor(tenley)).thenReturn(List.of());
-        when(medicalInfoService.getMedicationsFor(roger)).thenReturn(List.of());
-        when(medicalInfoService.getMedicationsFor(felicia)).thenReturn(of("tetracyclaz:650mg"));
+        when(personMedicalInfo.getMedicationsFor(john)).thenReturn(of("aznol:350mg", "hydrapermazol:100mg"));
+        when(personMedicalInfo.getMedicationsFor(jacob)).thenReturn(of("pharmacol:5000mg", "terazine:10mg", "noznazol:250mg"));
+        when(personMedicalInfo.getMedicationsFor(tenley)).thenReturn(List.of());
+        when(personMedicalInfo.getMedicationsFor(roger)).thenReturn(List.of());
+        when(personMedicalInfo.getMedicationsFor(felicia)).thenReturn(of("tetracyclaz:650mg"));
 
-        when(medicalInfoService.getAllergiesFor(john)).thenReturn(of("nillacilan"));
-        when(medicalInfoService.getAllergiesFor(jacob)).thenReturn(List.of());
-        when(medicalInfoService.getAllergiesFor(tenley)).thenReturn(of("peanut"));
-        when(medicalInfoService.getAllergiesFor(roger)).thenReturn(List.of());
-        when(medicalInfoService.getAllergiesFor(felicia)).thenReturn(of("xilliathal"));
+        when(personMedicalInfo.getAllergiesFor(john)).thenReturn(of("nillacilan"));
+        when(personMedicalInfo.getAllergiesFor(jacob)).thenReturn(List.of());
+        when(personMedicalInfo.getAllergiesFor(tenley)).thenReturn(of("peanut"));
+        when(personMedicalInfo.getAllergiesFor(roger)).thenReturn(List.of());
+        when(personMedicalInfo.getAllergiesFor(felicia)).thenReturn(of("xilliathal"));
 
         FireDTO dto = service.getResidentsByAddress("1509 Culver St");
 

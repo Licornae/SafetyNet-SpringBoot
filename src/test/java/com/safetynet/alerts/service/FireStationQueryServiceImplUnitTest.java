@@ -27,7 +27,7 @@ public class FireStationQueryServiceImplUnitTest {
     DataRepository dataRepository;
 
     @Mock
-    PeopleWithAgeService peopleWithAgeService;
+    PersonMedicalInfo personMedicalInfo;
 
     @InjectMocks
     FireStationQueryServiceImpl service;
@@ -59,7 +59,7 @@ public class FireStationQueryServiceImplUnitTest {
 
         PersonDTO peter  = new PersonDTO("Peter",  "Duncan", 20, GERSHWIN, "841-874-6512");
 
-        when(peopleWithAgeService.listAll()).thenReturn(of(john, jacob, tenley, peter));
+        when(personMedicalInfo.listAllPeopleWithAge()).thenReturn(of(john, jacob, tenley, peter));
 
         FirestationCoverageDTO dto = service.getCoverageByStation("3");
 

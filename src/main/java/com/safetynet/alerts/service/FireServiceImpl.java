@@ -26,7 +26,7 @@ import static com.safetynet.alerts.util.AddressNormalizer.equalsNormalized;
 public class FireServiceImpl implements FireService {
 
     private final DataRepository dataRepository;
-    private final MedicalInfoService medicalInfoService;
+    private final PersonMedicalInfo personMedicalInfo;
 
     /**
      * {@inheritDoc}
@@ -72,9 +72,9 @@ public class FireServiceImpl implements FireService {
         //Build PersonMedicalInfoDTO, enriching each person with medical info
         List<PersonMedicalInfoDTO> residents = new ArrayList<>();
         for (Person person : personsAtAddress) {
-            Integer age = medicalInfoService.getAgeFor(person);
-            List<String> medications = medicalInfoService.getMedicationsFor(person);
-            List<String> allergies = medicalInfoService.getAllergiesFor(person);
+            Integer age = personMedicalInfo.getAgeFor(person);
+            List<String> medications = personMedicalInfo.getMedicationsFor(person);
+            List<String> allergies = personMedicalInfo.getAllergiesFor(person);
 
             residents.add(new PersonMedicalInfoDTO(
                     person.getFirstName(),
